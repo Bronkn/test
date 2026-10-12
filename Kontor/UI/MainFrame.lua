@@ -79,6 +79,7 @@ local mainFrame
 
 local function createMainFrame()
     local frame = Kontor:CreateWindow("KontorMainFrame", "Kontor", 760, 480, "main")
+    Kontor:CreateScanWidget(frame, "TOPLEFT", frame, "TOPLEFT", 64, -30)
 
     local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisable")
     hint:SetPoint("CENTER", 0, -10)
