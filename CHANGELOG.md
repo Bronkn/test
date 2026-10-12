@@ -2,9 +2,16 @@
 
 ## [Unveröffentlicht]
 
-### M0 – API-Verifikation (läuft)
-- Pflichtenheft unter `docs/Pflichtenheft.md` abgelegt.
-- `API-NOTIZEN.md` angelegt: Retail-Vergleich (12.1.0) für alle Punkte aus Abschnitt 3,
-  Prüfbefehle für den Forever-Client. Ergebnisse aus Forever stehen noch aus.
-- Nachträge 1–3 unter `docs/` abgelegt; Zusatzprüfungen aus Nachtrag 1 und 2 in `API-NOTIZEN.md` (Block 5 und 6).
-- Noch kein Addon-Code (Pflichtenheft, Abschnitt 3: erst nach der API-Verifikation).
+### M1 – Gerüst (0.1.0, wartet auf Abnahme)
+- Addon-Ordner `Kontor/` mit Interface-Version 16001.
+- `/kontor` öffnet und schließt das (noch leere) Hauptfenster. Fenster verschiebbar, Position wird gemerkt, Escape schließt.
+- `/kontor status`: Addon-Version, Client-Build, Marktkennung, letzter Scan, Anzahl Preise, Körbe, Fehler.
+- `/kontor fehler`: Fehlerprotokoll (letzte 50) als markierbarer Text, mit „Protokoll leeren“.
+- `/kontor testfehler` erzeugt einen Testfehler. `/kontor hilfe` listet die Befehle.
+- Accountweite SavedVariable `KontorDB`, Datenmodell-Version 3 mit Migrationsgerüst.
+- Jeder Event-Handler und Befehl läuft geschützt: Fehler landen im Protokoll statt andere Teile lahmzulegen.
+
+### M0 – API-Verifikation (abgenommen 12.10.2026)
+- Pflichtenheft und Nachträge 1–3 unter `docs/` abgelegt.
+- `API-NOTIZEN.md`: Alle geprüften Funktionen und Events sind in Forever vorhanden. Interface-Version 16001.
+- Entscheidungen zu Salvager und Entzauber-Fertigkeit in `docs/Entscheidungen.md`.
