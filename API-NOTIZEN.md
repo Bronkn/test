@@ -2,7 +2,7 @@
 
 Ergebnis von **M0 – API-Verifikation** (Pflichtenheft, Abschnitt 3).
 
-Stand: 11.10.2026 · **Status: offen. Die Ergebnisse aus dem Forever-Client fehlen noch.**
+Stand: 12.10.2026 · **Status: Block 1 erledigt, Block 2 bis 7 offen.**
 
 ## Wie diese Datei aufgebaut ist
 
@@ -134,9 +134,9 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 | Händler | Event `MERCHANT_SHOW` | ✅ MerchantFrameDocumentation | offen | |
 | | Event `MERCHANT_CLOSED` | ✅ MerchantFrameDocumentation | offen | |
 | | `C_Container.UseContainerItem` | ✅ ContainerDocumentation | offen | |
-| Marktkennung | `UnitFactionGroup` | ✅ UnitDocumentation | offen | |
-| | `GetRealmName` / `GetNormalizedRealmName` | ✅ | offen | Was liefert Forever ohne Realms? |
-| | `GetCurrentRegion` / `GetCurrentRegionName` | ✅ | offen | Zusätzlich aufgenommen, als Teil der Marktkennung denkbar |
+| Marktkennung | `UnitFactionGroup` | ✅ UnitDocumentation | ✅ | `"Horde"` |
+| | `GetRealmName` / `GetNormalizedRealmName` | ✅ | ✅ | `"Classic Beta PvP"` / `"ClassicBetaPvP"`. Der Name enthält das Regelwerk |
+| | `GetCurrentRegion` / `GetCurrentRegionName` | ✅ | ⚠️ | `110` / `""` (leer). Ungewöhnliche Region, vermutlich Beta-intern. Nicht für die Marktkennung verwenden |
 
 ### Ergänzungen aus Nachtrag 1 und 2
 
@@ -158,7 +158,21 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 
 ## Interface-Version für die `.toc`
 
-offen (Ausgabe von `/dump select(4, GetBuildInfo())`)
+**16001** (aus `/dump select(4, GetBuildInfo())`, 12.10.2026)
+
+Vollständige Ausgabe von `GetBuildInfo()`: `"1.60.1"`, `"70338"`, `"Oct  9 2026"`, `16001`.
+
+⚠️ Die Spielversion heißt **1.60.1**, nicht 12.x wie Retail. Das Pflichtenheft geht von der
+Retail-Architektur 12.1.5 aus. Ob die Funktionen trotzdem wie in Retail heißen, zeigen Block 2 bis 5.
+
+## Marktkennung (Vorschlag)
+
+`<GetNormalizedRealmName()>-<UnitFactionGroup()>`, in der Beta also `ClassicBetaPvP-Horde`.
+
+- Der Realm-Name enthält das Regelwerk (hier PvP). Damit sind Normal / PvP / RP automatisch getrennt.
+  Ob das richtig ist oder Commodities regionsweit gehandelt werden, bleibt offener Punkt 2 im Pflichtenheft.
+- Zum Launch ändert sich der Name. Beta-Preise landen dann unter einer anderen Kennung und werden
+  auf dem Live-Server nicht angezeigt. Das ist gewollt, Beta-Preise taugen dort nicht.
 
 ## Beobachtungen aus der Retail-Doku
 
