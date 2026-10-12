@@ -2,7 +2,7 @@
 
 Ergebnis von **M0 – API-Verifikation** (Pflichtenheft, Abschnitt 3).
 
-Stand: 12.10.2026 · **Status: Block 1 bis 4 erledigt, Block 5 bis 7 offen.**
+Stand: 12.10.2026 · **Status: Block 1 bis 5 erledigt, Block 6 und 7 offen.**
 
 ## Wie diese Datei aufgebaut ist
 
@@ -143,18 +143,18 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 | Zweck | Name | Retail 12.1.0 | Forever | Anmerkung |
 |---|---|---|---|---|
 | Stapelgröße | `C_Item.GetItemInfo` → `itemStackCount` | ✅ ItemDocumentation | ✅ | 8. Rückgabewert. Leinenstoff: 20 (wie Classic) |
-| Berufe (Rezept übernehmen) | `C_TradeSkillUI.GetRecipeSchematic`, `GetRecipeInfo` | ✅ TradeSkillUIDocumentation | offen | Praxistest: Screenshot Block 6.5 |
-| | Event `TRADE_SKILL_SHOW` | ✅ | offen | |
-| | `GetProfessions` / `GetProfessionInfo` | Altfunktion, nicht in der Doku | offen | für Fertigkeitswert Verzauberkunst |
-| Entzaubern erkennen | Event `UNIT_SPELLCAST_SUCCEEDED` | ✅ UnitDocumentation | offen | |
-| | Events `LOOT_READY`, `LOOT_OPENED`, `LOOT_CLOSED` | ✅ LootDocumentation | offen | |
-| | `GetNumLootItems`, `GetLootSlotInfo`, `GetLootSlotLink` | Altfunktionen | offen | |
+| Berufe (Rezept übernehmen) | `C_TradeSkillUI.GetRecipeSchematic`, `GetRecipeInfo` | ✅ TradeSkillUIDocumentation | ✅ | Zusätzlich vorhanden: `C_TradeSkillUI.GetAllRecipeIDs` (fehlt in der Retail-Doku). Praxistest: Screenshot Block 6.5 |
+| | Event `TRADE_SKILL_SHOW` | ✅ | ✅ | |
+| | `GetProfessions` / `GetProfessionInfo` | Altfunktion, nicht in der Doku | ✅ | für Fertigkeitswert Verzauberkunst |
+| Entzaubern erkennen | Event `UNIT_SPELLCAST_SUCCEEDED` | ✅ UnitDocumentation | ✅ | |
+| | Events `LOOT_READY`, `LOOT_OPENED`, `LOOT_CLOSED` | ✅ LootDocumentation | ✅ | |
+| | `GetNumLootItems`, `GetLootSlotInfo`, `GetLootSlotLink` | Altfunktionen | ✅ | |
 | | `C_SpellBook.IsSpellKnown(13262)` | ✅ SpellBookDocumentation | offen | Spell-ID in Forever prüfen |
-| Fertigkeit zu niedrig | Event `UI_ERROR_MESSAGE` | ✅ SystemDocumentation | offen | genauer Text aus Block 6.3 |
-| Salvager-Buff | `C_UnitAuras.GetAuraDataByIndex` | ✅ UnitAuraDocumentation | offen | Buff-Name/ID aus Block 6.2 |
-| „Nächstes entzaubern" | `SecureActionButtonTemplate` | ✅ | offen | Wirkt der Knopf wirklich, zeigt erst M12 |
-| Post befüllen | `C_Container.PickupContainerItem`, `ClickSendMailItemButton` | ✅ / Altfunktion | offen | Wirklich erlaubt? Zeigt erst M13 |
-| | Event `MAIL_SHOW` | ✅ MailInfoDocumentation | offen | |
+| Fertigkeit zu niedrig | Event `UI_ERROR_MESSAGE` | ✅ SystemDocumentation | ✅ | genauer Text aus Block 6.3 |
+| Salvager-Buff | `C_UnitAuras.GetAuraDataByIndex` | ✅ UnitAuraDocumentation | ✅ | Buff-Name/ID aus Block 6.2 |
+| „Nächstes entzaubern" | `SecureActionButtonTemplate` | ✅ | ✅ | Knopf ließ sich anlegen. Wirkt der Knopf wirklich, zeigt erst M12 |
+| Post befüllen | `C_Container.PickupContainerItem`, `ClickSendMailItemButton` | ✅ / Altfunktion | ✅ (nur `ClickSendMailItemButton` geprüft) | Wirklich erlaubt? Zeigt erst M13 |
+| | Event `MAIL_SHOW` | ✅ MailInfoDocumentation | ✅ | |
 
 ## Interface-Version für die `.toc`
 
