@@ -2,7 +2,7 @@
 
 Ergebnis von **M0 – API-Verifikation** (Pflichtenheft, Abschnitt 3).
 
-Stand: 12.10.2026 · **Status: Block 1 bis 3 erledigt, Block 4 bis 7 offen.**
+Stand: 12.10.2026 · **Status: Block 1 bis 4 erledigt, Block 5 bis 7 offen.**
 
 ## Wie diese Datei aufgebaut ist
 
@@ -142,7 +142,7 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 
 | Zweck | Name | Retail 12.1.0 | Forever | Anmerkung |
 |---|---|---|---|---|
-| Stapelgröße | `C_Item.GetItemInfo` → `itemStackCount` | ✅ ItemDocumentation | offen | 8. Rückgabewert; im Screenshot vom Symbol verdeckt, Wiederholung ausstehend |
+| Stapelgröße | `C_Item.GetItemInfo` → `itemStackCount` | ✅ ItemDocumentation | ✅ | 8. Rückgabewert. Leinenstoff: 20 (wie Classic) |
 | Berufe (Rezept übernehmen) | `C_TradeSkillUI.GetRecipeSchematic`, `GetRecipeInfo` | ✅ TradeSkillUIDocumentation | offen | Praxistest: Screenshot Block 6.5 |
 | | Event `TRADE_SKILL_SHOW` | ✅ | offen | |
 | | `GetProfessions` / `GetProfessionInfo` | Altfunktion, nicht in der Doku | offen | für Fertigkeitswert Verzauberkunst |
