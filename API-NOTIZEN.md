@@ -150,8 +150,8 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 | | Events `LOOT_READY`, `LOOT_OPENED`, `LOOT_CLOSED` | ✅ LootDocumentation | ✅ | |
 | | `GetNumLootItems`, `GetLootSlotInfo`, `GetLootSlotLink` | Altfunktionen | ✅ | |
 | | `C_SpellBook.IsSpellKnown(13262)` | ✅ SpellBookDocumentation | offen | Spell-ID in Forever prüfen |
-| Fertigkeit zu niedrig | Event `UI_ERROR_MESSAGE` | ✅ SystemDocumentation | ✅ | genauer Text aus Block 6.3 |
-| Salvager-Buff | `C_UnitAuras.GetAuraDataByIndex` | ✅ UnitAuraDocumentation | ✅ | Buff-Name/ID aus Block 6.2 |
+| Fertigkeit zu niedrig | Event `UI_ERROR_MESSAGE` | ✅ SystemDocumentation | ✅ | Praxistest entfällt: Laut Nutzer lässt sich in Classic und bisher in Forever jedes Item mit Fertigkeit 1 entzaubern (12.10.2026). genauer Text aus Block 6.3 |
+| Salvager-Buff | `C_UnitAuras.GetAuraDataByIndex` | ✅ UnitAuraDocumentation | ✅ | Praxistest entfällt: Nutzer hat keinen Arcane Salvager. Buff-Name/ID unbekannt. Buff-Name/ID aus Block 6.2 |
 | „Nächstes entzaubern" | `SecureActionButtonTemplate` | ✅ | ✅ | Knopf ließ sich anlegen. Wirkt der Knopf wirklich, zeigt erst M12 |
 | Post befüllen | `C_Container.PickupContainerItem`, `ClickSendMailItemButton` | ✅ / Altfunktion | ✅ (nur `ClickSendMailItemButton` geprüft) | Wirklich erlaubt? Zeigt erst M13 |
 | | Event `MAIL_SHOW` | ✅ MailInfoDocumentation | ✅ | |
