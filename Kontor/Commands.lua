@@ -6,6 +6,10 @@ local HELP = {
     "/kontor - Fenster öffnen oder schließen",
     "/kontor status - Version, Client, Markt und Datenstand",
     "/kontor preis <Item-Link> - letzter Scan-Preis eines Items",
+    "/kontor tiefe <Item-Link> - Preistreppe im AH (nur bei offenem AH)",
+    "/kontor tooltip - Preiszeile im Tooltip an/aus",
+    "/kontor entzauber export - Entzauber-Protokoll zum Kopieren",
+    "/kontor salvager - Arcane Salvager aktiv/nicht aktiv",
     "/kontor fehler - Fehlerprotokoll zum Kopieren",
     "/kontor testfehler - erzeugt absichtlich einen Fehler (zum Testen)",
 }
@@ -51,6 +55,20 @@ local commands = {
     end,
     fehler = function() Kontor:ShowErrorFrame() end,
     preis = showPrice,
+    tiefe = function(arg) Kontor:QueryDepth(arg) end,
+    tooltip = function()
+        local cfg = Kontor.db.config
+        cfg.tooltipEnabled = not cfg.tooltipEnabled
+        Kontor:Print("Preiszeile im Tooltip: " .. (cfg.tooltipEnabled and "an" or "aus") .. ".")
+    end,
+    entzauber = function(arg)
+        if strtrim(arg or ""):lower() == "export" then
+            Kontor:ShowDisenchantExport()
+        else
+            Kontor:Print("Entzauber-Protokoll: " .. #Kontor.db.deLog .. " Einträge. /kontor entzauber export zeigt sie.")
+        end
+    end,
+    salvager = function() Kontor:ToggleSalvager() end,
     testfehler = function()
         error("Testfehler, absichtlich ausgelöst mit /kontor testfehler")
     end,

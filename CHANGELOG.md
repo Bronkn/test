@@ -2,6 +2,17 @@
 
 ## [Unveröffentlicht]
 
+### M3, M4, M5, M5b (0.3.0, wartet auf Abnahme)
+- **Tooltip (M3):** Zeile „AH-Tiefstpreis · Alter“ an jedem Item mit Scan-Preis, grau ab 24 Std., nicht im Kampf. `/kontor tooltip` schaltet sie ab.
+- **Aufräumen (M4):** Knopf über dem Händlerfenster mit Anzahl und Erlös. Vorschau mit Häkchen, Händlererlös, AH-Wert netto, Preisalter. Höchstens 12 Stapel je Durchlauf. Rechtsklick: „Nie verkaufen“. Verkauft wird nur, was noch genau so im Fach liegt.
+- **Markttiefe (M5):** `/kontor tiefe <Item>` listet die Preisstufen im Chat und den Preis für die ersten 20 Stück.
+- **Kauf-Erkennung (M5):** Commodity-Käufe im AH-Fenster werden im Chat mit Menge und Gesamtpreis gemeldet.
+- **Entzauber-Protokoll (M5b):** Jedes eindeutig zuzuordnende Entzaubern wird mit Item, Qualität, Stufe, Klasse, Fertigkeit, Buffs und Ergebnis gespeichert, mit Chatzeile. Fehlschläge mit Fehlermeldung landen getrennt. `/kontor entzauber export`, `/kontor salvager`.
+- Verzauberer-Name wird beim ersten Einloggen mit Entzaubern gespeichert.
+- Fehlende Events oder Funktionen im Client legen das Addon nicht mehr lahm, sondern landen im Fehlerprotokoll.
+- `/kontor status` zeigt zusätzlich das Entzauber-Protokoll.
+
+
 ### M2 – Übersichts-Scan (0.2.0, wartet auf Abnahme)
 - Knopf „Scannen“ im Kontor-Fenster und über dem AH-Fenster, nur bei offenem AH aktiv. Während des Scans wird er zu „Abbrechen“.
 - Blättert das AH über die Übersichtsabfrage durch, wartet bei Drosselung, verarbeitet höchstens 300 Zeilen pro Bild.

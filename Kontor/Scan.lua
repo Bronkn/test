@@ -230,8 +230,8 @@ end)
 
 -- A search started in the normal AH window replaces our result list.
 -- Stop cleanly instead of mixing it into the scan.
-hooksecurefunc(C_AuctionHouse, "SendBrowseQuery", function()
+Kontor:SecureHook(C_AuctionHouse, "SendBrowseQuery", "Scan", function()
     if state ~= "idle" and not ownQuery then
-        Kontor:SafeCall("Scan", Scan.Abort, Scan, "andere Suche im Auktionshaus gestartet")
+        Scan:Abort("andere Suche im Auktionshaus gestartet")
     end
 end)

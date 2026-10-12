@@ -2,14 +2,22 @@
 ## Title: Kontor
 ## Notes: Auktionshaus-Vorräte: Preise, Verlauf, Bestand und Signale.
 ## Author: Kontor
-## Version: 0.2.0
+## Version: 0.3.0
 ## SavedVariables: KontorDB
 
 Core.lua
 Util.lua
 Database.lua
+Data.lua
 Scan.lua
+Tooltip.lua
+Cleanup.lua
+Depth.lua
+Purchase.lua
+Disenchant.lua
 UI\MainFrame.lua
+UI\TextWindow.lua
 UI\ErrorFrame.lua
 UI\ScanUI.lua
+UI\CleanupUI.lua
 Commands.lua

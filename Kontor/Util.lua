@@ -68,3 +68,14 @@ function Kontor:ParseItemID(text)
     local id = text:match("item:(%d+)") or text:match("^%s*(%d+)%s*$")
     return id and tonumber(id)
 end
+
+-- True for values the client hides from addons (secret values, e.g. in combat).
+function Kontor:IsSecret(value)
+    return issecretvalue ~= nil and issecretvalue(value) or false
+end
+
+-- Item link if known, otherwise "Item 123".
+function Kontor:ItemLabel(itemID)
+    local link = itemID and select(2, C_Item.GetItemInfo(itemID))
+    return link or ("Item " .. tostring(itemID))
+end

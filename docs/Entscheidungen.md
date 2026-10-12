@@ -19,3 +19,22 @@ Abweichungen und Ergänzungen zum Pflichtenheft und den Nachträgen, jeweils vom
 - Eine neue Installation startet direkt mit Datenmodell-Version 3 (Pflichtenheft + Nachtrag 1 + 2).
   Die Migration von Version 1 (Rezepte aus den Körben nach `KontorDB.recipes`) ist trotzdem eingebaut.
 - Zusatzbefehl `/kontor testfehler`, damit sich das Fehlerprotokoll im Spiel prüfen lässt.
+
+## 12.10.2026 – Testen in Blöcken
+
+Der Nutzer testet nebenbei ein weiteres Addon und hat wenig Zeit. Abweichend von Pflichtenheft 6.5
+werden mehrere Meilensteine am Stück gebaut und mit einer gemeinsamen Testliste abgenommen.
+Erster Block: M2, M3, M4, M5, M5b (alles, was bis zum Beta-Ende am 22.10. stehen muss).
+Testliste: `docs/Testliste-M2-M5b.md`.
+
+## 12.10.2026 – Umsetzung M3 bis M5b
+
+- **Tooltip:** Die Zeile wird im Kampf grundsätzlich weggelassen (Pflichtenheft 4.2 „im Zweifel keine Zeile“).
+  Schalter bis zum Einstellungsfenster: `/kontor tooltip`.
+- **Aufräumen:** Graue Items werden nie vorgeschlagen (Pflichtenheft 7: Verkauf grauer Items nicht enthalten).
+  „Nie verkaufen“ per Rechtsklick fragt einmal nach.
+- **Kauf-Erkennung (M5):** meldet alle Commodity-Käufe im Chat; das Buchen ins Journal nur für Watchlist-Items folgt mit M8.
+- **Entzauber-Protokoll:** Das entzauberte Item wird daran erkannt, dass es während des Zaubers als einziges
+  in den Taschen gesperrt ist. Ist nicht genau ein Item gesperrt, wird nichts protokolliert.
+  Der Salvager-Schalter ist bis zum Entzauber-Fenster (M12) der Befehl `/kontor salvager`.
+  `/kontor entzauber export` zeigt in M5b das Rohprotokoll; die ausgewertete Gruppentabelle folgt mit M11.

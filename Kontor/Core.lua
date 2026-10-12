@@ -84,8 +84,13 @@ local handlers = {} -- event -> list of { module, fn }
 
 function Kontor:RegisterEvent(event, module, fn)
     if not handlers[event] then
+        -- An event missing in this client must not stop the rest of the addon.
+        local ok, err = pcall(eventFrame.RegisterEvent, eventFrame, event)
+        if not ok then
+            self:LogError(module, "Event " .. event .. " unbekannt: " .. tostring(err))
+            return
+        end
         handlers[event] = {}
-        eventFrame:RegisterEvent(event)
     end
     table.insert(handlers[event], { module = module, fn = fn })
 end
@@ -113,4 +118,16 @@ function Kontor:GetMarketKey()
         return nil
     end
     return realm .. "-" .. faction
+end
+
+-- hooksecurefunc that logs instead of failing when the function is missing
+-- in this client. The hook itself runs protected as well.
+function Kontor:SecureHook(tbl, name, module, fn)
+    if type(tbl) ~= "table" or type(tbl[name]) ~= "function" then
+        self:LogError(module, "Funktion " .. name .. " fehlt, Hook nicht gesetzt.")
+        return
+    end
+    hooksecurefunc(tbl, name, function(...)
+        Kontor:SafeCall(module, fn, ...)
+    end)
 end

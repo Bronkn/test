@@ -157,6 +157,22 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 | Post befüllen | `C_Container.PickupContainerItem`, `ClickSendMailItemButton` | ✅ / Altfunktion | ✅ (nur `ClickSendMailItemButton` geprüft) | Wirklich erlaubt? Zeigt erst M13 |
 | | Event `MAIL_SHOW` | ✅ MailInfoDocumentation | ✅ | |
 
+### Zusätzlich verwendet ab Version 0.3.0 (in Forever noch nicht einzeln geprüft)
+
+Fehlt eines davon, lädt das Addon trotzdem; der Fehler steht dann in `/kontor fehler`.
+
+| Name | Wofür |
+|---|---|
+| `C_XMLUtil.GetTemplateInfo` | prüft, ob Fenstervorlagen vorhanden sind |
+| `C_Timer.After` | verzögerte Neuberechnung beim Händler, Zeitlimit Markttiefe |
+| Events `BAG_UPDATE_DELAYED`, `GET_ITEM_INFO_RECEIVED` | Aufräumen-Knopf aktuell halten |
+| `C_Container.GetContainerItemQuestInfo` | Quest-Items beim Aufräumen ausschließen |
+| `C_AuctionHouse.MakeItemKey`, Events `COMMODITY_SEARCH_RESULTS_ADDED`, `ITEM_SEARCH_RESULTS_UPDATED` | Markttiefe |
+| Events `UNIT_SPELLCAST_START`, `UNIT_SPELLCAST_FAILED`, `UNIT_SPELLCAST_INTERRUPTED` | Entzaubern erkennen |
+| `GetLootSourceInfo` | Beute stammt vom Item, nicht von einem Gegner |
+| `C_Item.GetDetailedItemLevelInfo` | genaue Gegenstandsstufe |
+| `issecretvalue` | erkennt vom Spiel verborgene Werte (optional) |
+
 ## Erkenntnisse zu Rezepten
 
 - Händlerzutat von Sulfuric Acid (Schwefelsäure) ist **Leere Phiole** (Classic-ID 3371, in Forever noch zu bestätigen).

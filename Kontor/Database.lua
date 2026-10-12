@@ -24,6 +24,7 @@ local DEFAULTS = {
         deMinSamples = 10,
         deBuyDiscount = 0.25,
         deMaxQuality = 3, -- blue
+        salvagerActive = false, -- switch set by the user (docs/Entscheidungen.md)
     },
     markets = {},
     baskets = {},
