@@ -72,7 +72,33 @@ Danach die **gesamte Chat-Ausgabe** abschreiben oder als Screenshot schicken.
    /dump C_Item.GetItemInfo(2589)
    ```
 
-**Block 5: Marktkennung** (nur wenn du Zeit hast)
+**Block 5: Zusatzprüfungen aus Nachtrag 1 und 2** (überall). Erwartet: `function` bzw. `true`.
+
+```
+/run for _,n in ipairs({"GetProfessions","GetProfessionInfo","GetNumLootItems","GetLootSlotInfo","GetLootSlotLink","ClickSendMailItemButton"}) do print(n, type(_G[n])) end
+/run local t=C_TradeSkillUI or {} for _,n in ipairs({"GetRecipeSchematic","GetRecipeInfo","GetAllRecipeIDs"}) do print(n,type(t[n])) end print("Auren",type(C_UnitAuras and C_UnitAuras.GetAuraDataByIndex))
+/run local f=CreateFrame("Frame") for _,e in ipairs({"UNIT_SPELLCAST_SUCCEEDED","LOOT_READY","LOOT_OPENED","LOOT_CLOSED","UI_ERROR_MESSAGE","TRADE_SKILL_SHOW","MAIL_SHOW"}) do print(e,(pcall(f.RegisterEvent,f,e))) end
+/run local ok=pcall(CreateFrame,"Button","KontorTestKnopf",UIParent,"SecureActionButtonTemplate") print("Gesicherter Knopf", ok)
+```
+
+**Block 6: Auf dem Verzauberer** (Bankcharakter, nicht im Kampf)
+
+1. Prüfen, ob „Entzaubern" bekannt ist (Zauber 13262 ist in Classic „Entzaubern"):
+   ```
+   /dump C_SpellBook.IsSpellKnown(13262), C_Spell.GetSpellName(13262)
+   ```
+2. **Arcane Salvager** aufstellen, reinstellen, dann deine Buffs auflisten lassen:
+   ```
+   /run for i=1,40 do local a=C_UnitAuras.GetAuraDataByIndex("player",i) if not a then break end print(i,a.name,a.spellId) end
+   ```
+   Denselben Befehl noch einmal **ohne** Salvager. Ich vergleiche die beiden Listen.
+3. Ein Item entzaubern, für das deine Fertigkeit **nicht** reicht. Den genauen roten Text oben
+   im Bild abschreiben.
+4. Ein normales grünes Item entzaubern. Nur sagen: Ging ein Beutefenster auf, oder landete alles
+   direkt in der Tasche?
+5. Berufsfenster Alchemie öffnen, Sulfuric Acid anklicken, Screenshot.
+
+**Block 7: Marktkennung** (nur wenn du Zeit hast)
 
 Block 1 auf einem Charakter der **anderen Fraktion** wiederholen. Und, falls es in Forever
 unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro Regelwerk.
@@ -111,6 +137,24 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 | Marktkennung | `UnitFactionGroup` | ✅ UnitDocumentation | offen | |
 | | `GetRealmName` / `GetNormalizedRealmName` | ✅ | offen | Was liefert Forever ohne Realms? |
 | | `GetCurrentRegion` / `GetCurrentRegionName` | ✅ | offen | Zusätzlich aufgenommen, als Teil der Marktkennung denkbar |
+
+### Ergänzungen aus Nachtrag 1 und 2
+
+| Zweck | Name | Retail 12.1.0 | Forever | Anmerkung |
+|---|---|---|---|---|
+| Stapelgröße | `C_Item.GetItemInfo` → `itemStackCount` | ✅ ItemDocumentation | offen | kommt mit Block 4 |
+| Berufe (Rezept übernehmen) | `C_TradeSkillUI.GetRecipeSchematic`, `GetRecipeInfo` | ✅ TradeSkillUIDocumentation | offen | Praxistest: Screenshot Block 6.5 |
+| | Event `TRADE_SKILL_SHOW` | ✅ | offen | |
+| | `GetProfessions` / `GetProfessionInfo` | Altfunktion, nicht in der Doku | offen | für Fertigkeitswert Verzauberkunst |
+| Entzaubern erkennen | Event `UNIT_SPELLCAST_SUCCEEDED` | ✅ UnitDocumentation | offen | |
+| | Events `LOOT_READY`, `LOOT_OPENED`, `LOOT_CLOSED` | ✅ LootDocumentation | offen | |
+| | `GetNumLootItems`, `GetLootSlotInfo`, `GetLootSlotLink` | Altfunktionen | offen | |
+| | `C_SpellBook.IsSpellKnown(13262)` | ✅ SpellBookDocumentation | offen | Spell-ID in Forever prüfen |
+| Fertigkeit zu niedrig | Event `UI_ERROR_MESSAGE` | ✅ SystemDocumentation | offen | genauer Text aus Block 6.3 |
+| Salvager-Buff | `C_UnitAuras.GetAuraDataByIndex` | ✅ UnitAuraDocumentation | offen | Buff-Name/ID aus Block 6.2 |
+| „Nächstes entzaubern" | `SecureActionButtonTemplate` | ✅ | offen | Wirkt der Knopf wirklich, zeigt erst M12 |
+| Post befüllen | `C_Container.PickupContainerItem`, `ClickSendMailItemButton` | ✅ / Altfunktion | offen | Wirklich erlaubt? Zeigt erst M13 |
+| | Event `MAIL_SHOW` | ✅ MailInfoDocumentation | offen | |
 
 ## Interface-Version für die `.toc`
 
