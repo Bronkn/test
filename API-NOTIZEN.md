@@ -2,7 +2,7 @@
 
 Ergebnis von **M0 – API-Verifikation** (Pflichtenheft, Abschnitt 3).
 
-Stand: 12.10.2026 · **Status: Block 1 bis 5 erledigt, Block 6 und 7 offen.**
+Stand: 12.10.2026 · **Status: Block 1 bis 6 erledigt (6.2 und 6.3 entfallen), Block 7 optional offen.**
 
 ## Wie diese Datei aufgebaut ist
 
@@ -143,18 +143,24 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 | Zweck | Name | Retail 12.1.0 | Forever | Anmerkung |
 |---|---|---|---|---|
 | Stapelgröße | `C_Item.GetItemInfo` → `itemStackCount` | ✅ ItemDocumentation | ✅ | 8. Rückgabewert. Leinenstoff: 20 (wie Classic) |
-| Berufe (Rezept übernehmen) | `C_TradeSkillUI.GetRecipeSchematic`, `GetRecipeInfo` | ✅ TradeSkillUIDocumentation | ✅ | Zusätzlich vorhanden: `C_TradeSkillUI.GetAllRecipeIDs` (fehlt in der Retail-Doku). Praxistest: Screenshot Block 6.5 |
+| Berufe (Rezept übernehmen) | `C_TradeSkillUI.GetRecipeSchematic`, `GetRecipeInfo` | ✅ TradeSkillUIDocumentation | ✅ | Zusätzlich vorhanden: `C_TradeSkillUI.GetAllRecipeIDs` (fehlt in der Retail-Doku). Screenshot Block 6.5: Berufsfenster zeigt Rezept, Zutaten und Mengen (Schwefelsäure: 2 × Pyrit, 1 × Leere Phiole). Übernahme (Nachtrag 1, 4.3) erscheint machbar |
 | | Event `TRADE_SKILL_SHOW` | ✅ | ✅ | |
 | | `GetProfessions` / `GetProfessionInfo` | Altfunktion, nicht in der Doku | ✅ | für Fertigkeitswert Verzauberkunst |
 | Entzaubern erkennen | Event `UNIT_SPELLCAST_SUCCEEDED` | ✅ UnitDocumentation | ✅ | |
 | | Events `LOOT_READY`, `LOOT_OPENED`, `LOOT_CLOSED` | ✅ LootDocumentation | ✅ | |
 | | `GetNumLootItems`, `GetLootSlotInfo`, `GetLootSlotLink` | Altfunktionen | ✅ | |
-| | `C_SpellBook.IsSpellKnown(13262)` | ✅ SpellBookDocumentation | offen | Spell-ID in Forever prüfen |
+| | `C_SpellBook.IsSpellKnown(13262)` | ✅ SpellBookDocumentation | ✅ | `true`, Name „Entzaubern“. Spell-ID 13262 gilt auch in Forever |
+| | Beutefenster nach Entzaubern | – | ✅ | Ein Beutefenster („Gegenstände“) öffnet sich, Ergebnis im Test: 2 × Seelenstaub (neues Material, Qualität „Verbreitet“) |
 | Fertigkeit zu niedrig | Event `UI_ERROR_MESSAGE` | ✅ SystemDocumentation | ✅ | Praxistest entfällt: Laut Nutzer lässt sich in Classic und bisher in Forever jedes Item mit Fertigkeit 1 entzaubern (12.10.2026). genauer Text aus Block 6.3 |
 | Salvager-Buff | `C_UnitAuras.GetAuraDataByIndex` | ✅ UnitAuraDocumentation | ✅ | Praxistest entfällt: Nutzer hat keinen Arcane Salvager. Buff-Name/ID unbekannt. Buff-Name/ID aus Block 6.2 |
 | „Nächstes entzaubern" | `SecureActionButtonTemplate` | ✅ | ✅ | Knopf ließ sich anlegen. Wirkt der Knopf wirklich, zeigt erst M12 |
 | Post befüllen | `C_Container.PickupContainerItem`, `ClickSendMailItemButton` | ✅ / Altfunktion | ✅ (nur `ClickSendMailItemButton` geprüft) | Wirklich erlaubt? Zeigt erst M13 |
 | | Event `MAIL_SHOW` | ✅ MailInfoDocumentation | ✅ | |
+
+## Erkenntnisse zu Rezepten
+
+- Händlerzutat von Sulfuric Acid (Schwefelsäure) ist **Leere Phiole** (Classic-ID 3371, in Forever noch zu bestätigen).
+- Deutsche Namen: Sulfuric Acid = Schwefelsäure, Cerulean Dye = Himmelblauer Farbstoff, Pyrite = Pyrit.
 
 ## Interface-Version für die `.toc`
 
