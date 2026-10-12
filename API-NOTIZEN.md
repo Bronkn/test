@@ -2,7 +2,7 @@
 
 Ergebnis von **M0 – API-Verifikation** (Pflichtenheft, Abschnitt 3).
 
-Stand: 12.10.2026 · **Status: Block 1 und 2 erledigt, Block 3 bis 7 offen.**
+Stand: 12.10.2026 · **Status: Block 1 bis 3 erledigt, Block 4 bis 7 offen.**
 
 ## Wie diese Datei aufgebaut ist
 
@@ -109,30 +109,30 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 
 | Zweck | Name | Retail 12.1.0 | Forever | Anmerkung |
 |---|---|---|---|---|
-| AH offen/zu | Event `AUCTION_HOUSE_SHOW` | ✅ AuctionHouseDocumentation | offen | |
-| | Event `AUCTION_HOUSE_CLOSED` | ✅ AuctionHouseDocumentation | offen | |
+| AH offen/zu | Event `AUCTION_HOUSE_SHOW` | ✅ AuctionHouseDocumentation | ✅ | |
+| | Event `AUCTION_HOUSE_CLOSED` | ✅ AuctionHouseDocumentation | ✅ | |
 | Übersichts-Scan | `C_AuctionHouse.SendBrowseQuery` | ✅ | ✅ | Argument: `AuctionHouseBrowseQuery` |
 | | `C_AuctionHouse.GetBrowseResults` | ✅ | ✅ | Liefert `BrowseResultInfo`: `itemKey`, `totalQuantity`, `minPrice` |
 | | `C_AuctionHouse.HasFullBrowseResults` | ✅ | ✅ | |
 | | `C_AuctionHouse.RequestMoreBrowseResults` | ✅ | ✅ | |
-| | Event `AUCTION_HOUSE_BROWSE_RESULTS_UPDATED` | ✅ | offen | |
-| | Event `AUCTION_HOUSE_BROWSE_RESULTS_ADDED` | ✅ | offen | Payload: `addedBrowseResults` |
+| | Event `AUCTION_HOUSE_BROWSE_RESULTS_UPDATED` | ✅ | ✅ | |
+| | Event `AUCTION_HOUSE_BROWSE_RESULTS_ADDED` | ✅ | ✅ | Payload: `addedBrowseResults` |
 | Drosselung | `C_AuctionHouse.IsThrottledMessageSystemReady` | ✅ | ✅ | |
-| | Event `AUCTION_HOUSE_THROTTLED_SYSTEM_READY` | ✅ | offen | |
+| | Event `AUCTION_HOUSE_THROTTLED_SYSTEM_READY` | ✅ | ✅ | |
 | Markttiefe | `C_AuctionHouse.SendSearchQuery` | ✅ | ✅ | |
 | | `C_AuctionHouse.GetNumCommoditySearchResults` | ✅ | ✅ | |
 | | `C_AuctionHouse.GetCommoditySearchResultInfo` | ✅ | ✅ | Argumente `itemID`, Index |
-| | Event `COMMODITY_SEARCH_RESULTS_UPDATED` | ✅ | offen | |
+| | Event `COMMODITY_SEARCH_RESULTS_UPDATED` | ✅ | ✅ | |
 | Kauf-Erkennung | `C_AuctionHouse.StartCommoditiesPurchase` | ✅ | ✅ | Argumente `itemID`, `quantity`. In Retail als `HasRestrictions` markiert, Hook muss praktisch getestet werden (M5) |
 | | `C_AuctionHouse.ConfirmCommoditiesPurchase` | ✅ | ✅ | Argumente `itemID`, `quantity` |
-| | Event `COMMODITY_PRICE_UPDATED` | ✅ | offen | Payload: `updatedUnitPrice`, `updatedTotalPrice` |
-| | Event `COMMODITY_PURCHASE_SUCCEEDED` | ✅ | offen | **Ohne Payload.** Item und Menge müssen aus dem Hook gemerkt werden |
-| | Event `COMMODITY_PURCHASE_FAILED` | ✅ | offen | |
-| Tooltip | `TooltipDataProcessor.AddTooltipPostCall` | ✅ Blizzard_SharedXMLGame/Tooltip/TooltipDataHandler.lua | ✅ | |
+| | Event `COMMODITY_PRICE_UPDATED` | ✅ | ✅ | Payload: `updatedUnitPrice`, `updatedTotalPrice` |
+| | Event `COMMODITY_PURCHASE_SUCCEEDED` | ✅ | ✅ | **Ohne Payload.** Item und Menge müssen aus dem Hook gemerkt werden |
+| | Event `COMMODITY_PURCHASE_FAILED` | ✅ | ✅ | |
+| Tooltip | `TooltipDataProcessor.AddTooltipPostCall` | ✅ Blizzard_SharedXMLGame/Tooltip/TooltipDataHandler.lua | ✅ | `TooltipDataProcessor` ist `table`, `Enum.TooltipDataType.Item` = `0`, `hooksecurefunc` vorhanden |
 | Händlerpreis | `C_Item.GetItemInfo` → `sellPrice` | ✅ ItemDocumentation | ✅ | |
 | Tascheninhalt | `C_Container.GetContainerItemInfo` | ✅ ContainerDocumentation | ✅ | Felder `isBound`, `hasNoValue`, `quality` vorhanden |
-| Händler | Event `MERCHANT_SHOW` | ✅ MerchantFrameDocumentation | offen | |
-| | Event `MERCHANT_CLOSED` | ✅ MerchantFrameDocumentation | offen | |
+| Händler | Event `MERCHANT_SHOW` | ✅ MerchantFrameDocumentation | ✅ | |
+| | Event `MERCHANT_CLOSED` | ✅ MerchantFrameDocumentation | ✅ | |
 | | `C_Container.UseContainerItem` | ✅ ContainerDocumentation | ✅ | |
 | Marktkennung | `UnitFactionGroup` | ✅ UnitDocumentation | ✅ | `"Horde"` |
 | | `GetRealmName` / `GetNormalizedRealmName` | ✅ | ✅ | `"Classic Beta PvP"` / `"ClassicBetaPvP"`. Der Name enthält das Regelwerk |
