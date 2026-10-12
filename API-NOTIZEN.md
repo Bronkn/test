@@ -129,8 +129,8 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 | | Event `COMMODITY_PURCHASE_SUCCEEDED` | ✅ | ✅ | **Ohne Payload.** Item und Menge müssen aus dem Hook gemerkt werden |
 | | Event `COMMODITY_PURCHASE_FAILED` | ✅ | ✅ | |
 | Tooltip | `TooltipDataProcessor.AddTooltipPostCall` | ✅ Blizzard_SharedXMLGame/Tooltip/TooltipDataHandler.lua | ✅ | `TooltipDataProcessor` ist `table`, `Enum.TooltipDataType.Item` = `0`, `hooksecurefunc` vorhanden |
-| Händlerpreis | `C_Item.GetItemInfo` → `sellPrice` | ✅ ItemDocumentation | ✅ | |
-| Tascheninhalt | `C_Container.GetContainerItemInfo` | ✅ ContainerDocumentation | ✅ | Felder `isBound`, `hasNoValue`, `quality` vorhanden |
+| Händlerpreis | `C_Item.GetItemInfo` → `sellPrice` | ✅ ItemDocumentation | ✅ | Reihenfolge der Rückgabewerte wie Retail. Leinenstoff: `sellPrice` (11.) = 13 Kupfer, Qualität 1, `isCraftingReagent` true. Erster Aufruf lieferte sofort Daten |
+| Tascheninhalt | `C_Container.GetContainerItemInfo` | ✅ ContainerDocumentation | ✅ | Felder `isBound`, `hasNoValue`, `quality` vorhanden. Forever: Rucksack Platz 1 lieferte `empty result` (leerer Platz?), Wiederholung ausstehend |
 | Händler | Event `MERCHANT_SHOW` | ✅ MerchantFrameDocumentation | ✅ | |
 | | Event `MERCHANT_CLOSED` | ✅ MerchantFrameDocumentation | ✅ | |
 | | `C_Container.UseContainerItem` | ✅ ContainerDocumentation | ✅ | |
@@ -142,7 +142,7 @@ unterschiedliche Regelwerke gibt (Normal / PvP / RP), auf je einem Charakter pro
 
 | Zweck | Name | Retail 12.1.0 | Forever | Anmerkung |
 |---|---|---|---|---|
-| Stapelgröße | `C_Item.GetItemInfo` → `itemStackCount` | ✅ ItemDocumentation | offen | kommt mit Block 4 |
+| Stapelgröße | `C_Item.GetItemInfo` → `itemStackCount` | ✅ ItemDocumentation | offen | 8. Rückgabewert; im Screenshot vom Symbol verdeckt, Wiederholung ausstehend |
 | Berufe (Rezept übernehmen) | `C_TradeSkillUI.GetRecipeSchematic`, `GetRecipeInfo` | ✅ TradeSkillUIDocumentation | offen | Praxistest: Screenshot Block 6.5 |
 | | Event `TRADE_SKILL_SHOW` | ✅ | offen | |
 | | `GetProfessions` / `GetProfessionInfo` | Altfunktion, nicht in der Doku | offen | für Fertigkeitswert Verzauberkunst |
