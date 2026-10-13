@@ -2,6 +2,10 @@
 
 ## [Unveröffentlicht]
 
+### 0.3.3 – Scan wieder mit einer Abfrage
+- Test 13.10.2026: Die Abfrage ohne Filter allein lieferte 3133 von 3134 Items. Der Scan nach Klassen und das Aufteilen bei 300 entfallen wieder, der Scan ist dadurch etwa dreimal so schnell.
+
+
 ### 0.3.2 – Scan verliert keine Zeilen mehr
 - **Fehler behoben (Ursache der fehlenden Items):** Kam eine neue Ergebnisseite an, während die vorige noch verarbeitet wurde, konnte die Warteschlange des Scans Zeilen verlieren. Daher stammten die „genau 300 Items“ bei Verbrauchbar und Handwerkswaren (300 = Zeilen pro Bild) und das fehlende Pyrit.
 - Liefert eine Abfrage trotzdem genau 300 Zeilen, teilt der Scan sie automatisch in Unterklassen und dann in Qualitäten auf. `/kontor scaninfo` markiert abgeschnittene Abfragen.

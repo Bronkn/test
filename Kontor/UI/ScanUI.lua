@@ -10,7 +10,8 @@ function Kontor:UpdateScanWidgets()
     local text
     if running then
         local count, elapsed, step, steps = self.Scan:GetProgress()
-        text = "Scan läuft: " .. count .. " Items · Abfrage " .. step .. "/" .. steps .. " · " .. self:FormatDuration(elapsed)
+        text = "Scan läuft: " .. count .. " Items"
+            .. (steps > 1 and (" · Abfrage " .. step .. "/" .. steps) or "") .. " · " .. self:FormatDuration(elapsed)
     elseif not self.ahOpen then
         text = "Scannen geht nur bei geöffnetem Auktionshaus."
     else
@@ -129,7 +130,6 @@ function Kontor:PrintScanInfo()
         .. self:FormatDuration(last.durationSec) .. (last.complete and "" or " (unvollständig)") .. ".")
     for _, q in ipairs(last.queries or {}) do
         DEFAULT_CHAT_FRAME:AddMessage("  " .. q.label .. ": " .. q.items .. " Items"
-            .. (q.timedOut and " (keine vollständige Antwort)" or "")
-            .. (q.capped and " |cffff8800(abgeschnitten)|r" or ""))
+            .. (q.timedOut and " (keine vollständige Antwort)" or ""))
     end
 end

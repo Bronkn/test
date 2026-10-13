@@ -51,3 +51,6 @@ Der Scan fragt jede Item-Klasse einzeln ab und zum Schluss einmal ohne Filter. A
 300 Zeilen werden in Unterklassen und Qualitäten aufgeteilt. Ob das nach der Fehlerbehebung in 0.3.2
 noch nötig ist, entscheiden die Zahlen aus `/kontor scaninfo`; falls nicht, kann der Scan wieder auf
 eine Abfrage reduziert werden (schneller).
+
+Nachtrag 13.10.2026: Die Zahlen (ohne Filter 3133 von 3134 Items) zeigen, dass eine Abfrage reicht.
+Ab 0.3.3 fragt der Scan wieder nur einmal ohne Filter ab.
