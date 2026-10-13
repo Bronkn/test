@@ -34,9 +34,9 @@ Testliste: `docs/Testliste-M2-M5b.md`.
 - **Aufräumen:** Graue Items werden nie vorgeschlagen (Pflichtenheft 7: Verkauf grauer Items nicht enthalten).
   „Nie verkaufen“ per Rechtsklick fragt einmal nach.
 - **Kauf-Erkennung (M5):** meldet alle Commodity-Käufe im Chat; das Buchen ins Journal nur für Watchlist-Items folgt mit M8.
-- **Entzauber-Protokoll:** Das entzauberte Item wird über den Zielnamen aus `UNIT_SPELLCAST_SENT` erkannt,
-  ersatzweise über das zuletzt gesperrte Taschenfach oder das einzige gesperrte Item (ab 0.3.4; die erste
-  Fassung nutzte nur die Sperre und scheiterte in Forever). Bleibt es unklar, wird nichts protokolliert.
+- **Entzauber-Protokoll:** Das entzauberte Item wird per Taschenvergleich erkannt: Schnappschuss beim
+  Wirken, Vergleich nach der Beute; genau ein verschwundenes Item ist das entzauberte (ab 0.3.5). Zielname
+  und Fachsperre liefert Forever nicht (Tests 13.10.2026). Bleibt es unklar, wird nichts protokolliert.
   Der Salvager-Schalter ist bis zum Entzauber-Fenster (M12) der Befehl `/kontor salvager`.
   `/kontor entzauber export` zeigt in M5b das Rohprotokoll; die ausgewertete Gruppentabelle folgt mit M11.
 

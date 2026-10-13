@@ -2,6 +2,11 @@
 
 ## [Unveröffentlicht]
 
+### 0.3.5 – Entzaubern über Taschenvergleich erkennen
+- Forever schickt beim Entzaubern keinen Zielnamen und sperrt kein Fach (Test 13.10.2026: „Ziel unbekannt, 0 gesperrt“). Das Addon merkt sich jetzt beim Wirken den Tascheninhalt und erkennt nach der Beute, welches Item verschwunden ist. Wird das Item erst kurz nach der Beute entfernt, wartet es bis zu 3 s.
+- Fehlschläge werden ohne Item gespeichert (das Item ist bei einem Fehlschlag nicht sicher bekannt).
+
+
 ### 0.3.4 – Entzaubern zuverlässiger erkennen
 - **Fehler behoben:** In Forever wurde das entzauberte Item nicht erkannt („nicht eindeutig“), weil die Erkennung nur auf die Sperre des Taschenfachs setzte. Jetzt in dieser Reihenfolge: Zielname, den das Spiel beim Wirken mitschickt; zuletzt gesperrtes Fach; einziges gesperrtes Item.
 - Bleibt es unklar, nennt die Chatzeile, was gesehen wurde (Zielname, Anzahl passender und gesperrter Items).

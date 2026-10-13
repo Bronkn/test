@@ -9,9 +9,8 @@ local ENCHANTING_SKILL_LINE = 333
 local LOOT_WINDOW = 5 -- seconds between cast success and loot
 local ERROR_WINDOW = 2 -- seconds an error message counts for a failed cast
 
-local attempt -- { link, itemID, quality, ilvl, class, reqLevel, unclear, succeededAt, auras, skill }
+local attempt -- { before = bag snapshot, succeededAt, auras, skill, results, parts }
 local lastError -- { msg, at }
-local sentTarget -- item name from UNIT_SPELLCAST_SENT
 
 local function classLabel(classID)
     if classID == 4 then return "armor" end
@@ -19,57 +18,36 @@ local function classLabel(classID)
     return "other"
 end
 
-local LOCK_WINDOW = 5 -- seconds a slot lock counts as "just clicked"
+local BAG_WAIT = 3 -- seconds to wait for the bags to update after the loot
 
-local lastLock -- { bag, slot, at }: the bag slot locked most recently
-
--- Which bag item is being disenchanted? Tried in this order (the first
--- version relied on the lock alone, which failed in Forever on 13.10.2026):
---  1. the target name the game sends with the cast, matched in the bags
---  2. the slot locked just before the cast (ITEM_LOCK_CHANGED)
---  3. the only locked item in the bags
--- Returns the slot info, or nil plus a short description of what was seen.
-local function findTarget(targetName)
-    local byName, locked = {}, {}
+-- Which bag item was disenchanted? Forever sends no target name and locks no
+-- slot (tests 13.10.2026), so the bags are compared: a snapshot taken when
+-- the cast is sent, against the bags after the loot. The one slot whose item
+-- disappeared (or shrank by one) is the disenchanted item.
+local function snapshotBags()
+    local snap = {}
     Kontor:ForEachBagItem(function(bag, slot, info)
-        if targetName and info.itemName == targetName then
-            table.insert(byName, info)
-        end
-        if info.isLocked then
-            table.insert(locked, info)
-        end
+        snap[bag .. ":" .. slot] = info
     end)
-
-    -- 1. Several stacks with the same name are fine if they are the same item.
-    if #byName > 0 then
-        local first = byName[1]
-        local same = true
-        for _, info in ipairs(byName) do
-            if info.hyperlink ~= first.hyperlink then same = false end
-        end
-        if same then return first end
-        for _, info in ipairs(byName) do
-            if info.isLocked then return info end
-        end
-    end
-
-    -- 2.
-    if lastLock and GetTime() - lastLock.at <= LOCK_WINDOW then
-        local info = C_Container.GetContainerItemInfo(lastLock.bag, lastLock.slot)
-        if info and info.itemID and (not targetName or info.itemName == targetName) then
-            return info
-        end
-    end
-
-    -- 3.
-    if #locked == 1 then return locked[1] end
-
-    return nil, string.format("Ziel %s, %d passende Items, %d gesperrt",
-        targetName and ('"' .. targetName .. '"') or "unbekannt", #byName, #locked)
+    return snap
 end
 
-local function describe(info, why)
-    if not info then return { unclear = true, why = why } end
+local lastSnapshot = {} -- kept current while no disenchant is pending
+
+-- Slots of `before` whose item is gone or fewer now.
+local function vanishedItems(before)
+    local now = snapshotBags()
+    local gone = {}
+    for key, old in pairs(before) do
+        local cur = now[key]
+        if not cur or cur.itemID ~= old.itemID or (cur.stackCount or 1) < (old.stackCount or 1) then
+            table.insert(gone, old)
+        end
+    end
+    return gone
+end
+
+local function describe(info)
     local link = info.hyperlink
     local _, _, quality, ilvl, reqLevel, _, _, _, _, _, _, classID = C_Item.GetItemInfo(link or info.itemID)
     if C_Item.GetDetailedItemLevelInfo and link then
@@ -128,59 +106,41 @@ for _, event in ipairs(castEvents) do
 end
 
 local function logFailure(reason)
-    local a = attempt or describe(findTarget(sentTarget))
-    table.insert(Kontor.db.deFailures, {
-        t = time(), itemID = a.itemID, quality = a.quality, ilvl = a.ilvl, class = a.class,
-        skill = enchantingSkill(), msg = reason,
-    })
-    Kontor:Print("Entzaubern fehlgeschlagen" .. (a.link and (" (" .. a.link .. ")") or "") .. ": " .. reason)
+    table.insert(Kontor.db.deFailures, { t = time(), skill = enchantingSkill(), msg = reason })
+    Kontor:Print("Entzaubern fehlgeschlagen: " .. reason)
 end
 
 castFrame:SetScript("OnEvent", function(_, event, unit, ...)
     Kontor:SafeCall("Entzaubern", function(...)
         -- UNIT_SPELLCAST_SENT: unit, target, castGUID, spellID; the others: unit, castGUID, spellID
-        local target, spellID
+        local spellID
         if event == "UNIT_SPELLCAST_SENT" then
-            target, _, spellID = ...
+            spellID = select(3, ...)
         else
-            _, spellID = ...
+            spellID = select(2, ...)
         end
         if not isDisenchant(unit, spellID) then return end
 
-        if event == "UNIT_SPELLCAST_SENT" then
-            sentTarget = (target and not Kontor:IsSecret(target) and target ~= "") and target or nil
-            -- The item still exists here; describe it before the cast destroys it.
-            attempt = describe(findTarget(sentTarget))
-        elseif event == "UNIT_SPELLCAST_START" then
-            if not attempt or attempt.unclear then
-                attempt = describe(findTarget(sentTarget))
+        if event == "UNIT_SPELLCAST_SENT" or event == "UNIT_SPELLCAST_START" then
+            -- The item is still in the bags here.
+            if not attempt then
+                attempt = { before = snapshotBags() }
             end
         elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
-            if not attempt or attempt.unclear then
-                attempt = describe(findTarget(sentTarget))
-            end
+            -- Without SENT/START, the snapshot from the last bag update must do.
+            attempt = attempt or { before = lastSnapshot }
             attempt.succeededAt = GetTime()
             attempt.auras = playerAuras()
             attempt.skill = enchantingSkill()
         else -- failed or interrupted
-            -- Only failures with a game error message are logged (e.g. skill
-            -- too low); moving or pressing Escape is no failure of the item.
+            -- Only failures with a game error message are logged; moving or
+            -- pressing Escape is no failure of the item.
             if event == "UNIT_SPELLCAST_FAILED" and lastError and GetTime() - lastError.at <= ERROR_WINDOW then
                 logFailure(lastError.msg)
             end
             attempt = nil
-            sentTarget = nil
         end
     end, ...)
-end)
-
-Kontor:RegisterEvent("ITEM_LOCK_CHANGED", "Entzaubern", function(_, bag, slot)
-    if bag and slot and not Kontor:IsSecret(bag) then
-        local info = C_Container.GetContainerItemInfo(bag, slot)
-        if info and info.isLocked then
-            lastLock = { bag = bag, slot = slot, at = GetTime() }
-        end
-    end
 end)
 
 Kontor:RegisterEvent("UI_ERROR_MESSAGE", "Entzaubern", function(_, _, message)
@@ -212,34 +172,69 @@ local function readLoot()
     return results, parts
 end
 
-local function onLoot()
-    local a = attempt
-    if not a or not a.succeededAt then return end -- not ours (mob, chest, ...)
-    attempt, sentTarget = nil, nil
-    if GetTime() - a.succeededAt > LOOT_WINDOW or not lootIsFromItem() then return end
-    if a.unclear then
-        Kontor:Print("Entzaubern nicht protokolliert: Item nicht eindeutig erkannt (" .. (a.why or "?") .. ").")
-        return
+-- Writes the entry once the vanished item is known. Returns false while the
+-- bags still hold everything (the item is removed shortly after the loot).
+local function tryResolve(a, final)
+    local gone = vanishedItems(a.before)
+    local item = (#gone == 1) and gone[1] or nil
+    if not item then
+        if #gone == 0 and not final then return false end
+        Kontor:Print("Entzaubern nicht protokolliert: Item nicht eindeutig erkannt ("
+            .. #gone .. " Items aus der Tasche verschwunden).")
+        return true
     end
 
-    local results, parts = readLoot()
-    if #parts == 0 then return end
-
+    local d = describe(item)
     local cfg = Kontor.db.config
     table.insert(Kontor.db.deLog, {
-        t = time(), itemID = a.itemID, quality = a.quality, ilvl = a.ilvl, class = a.class,
-        reqLevel = a.reqLevel, skill = a.skill, salvager = cfg.salvagerActive and true or false,
-        auras = a.auras, results = results,
+        t = time(), itemID = d.itemID, quality = d.quality, ilvl = d.ilvl, class = d.class,
+        reqLevel = d.reqLevel, skill = a.skill, salvager = cfg.salvagerActive and true or false,
+        auras = a.auras, results = a.results,
     })
-    Kontor:Print("Entzaubert: " .. (a.link or Kontor:ItemLabel(a.itemID)) .. " → " .. table.concat(parts, ", ")
+    Kontor:Print("Entzaubert: " .. (d.link or Kontor:ItemLabel(d.itemID)) .. " → " .. table.concat(a.parts, ", ")
         .. (cfg.salvagerActive and " (Salvager aktiv)" or ""))
+    return true
 end
+
+local resolving -- attempt waiting for the bags after its loot
+
+local function onLoot()
+    local a = attempt
+    if not a or not a.succeededAt or a.results then return end -- not ours, or already read
+    if GetTime() - a.succeededAt > LOOT_WINDOW or not lootIsFromItem() then
+        attempt = nil
+        return
+    end
+    a.results, a.parts = readLoot()
+    attempt = nil
+    if #a.parts == 0 then return end
+
+    if not tryResolve(a, false) then
+        resolving = a
+        C_Timer.After(BAG_WAIT, function()
+            if resolving == a then
+                resolving = nil
+                Kontor:SafeCall("Entzaubern", tryResolve, a, true)
+            end
+        end)
+    end
+end
+
+Kontor:RegisterEvent("BAG_UPDATE_DELAYED", "Entzaubern", function()
+    if resolving then
+        local a = resolving
+        if tryResolve(a, false) then resolving = nil end
+    elseif not attempt then
+        lastSnapshot = snapshotBags()
+    end
+end)
 
 Kontor:RegisterEvent("LOOT_READY", "Entzaubern", onLoot)
 Kontor:RegisterEvent("LOOT_OPENED", "Entzaubern", onLoot)
 
 -- Enchanter name (Nachtrag 2, 5): remembered on the first login with enchanting.
 Kontor:RegisterEvent("PLAYER_LOGIN", "Entzaubern", function()
+    lastSnapshot = snapshotBags()
     local cfg = Kontor.db.config
     local known = C_SpellBook and C_SpellBook.IsSpellKnown and C_SpellBook.IsSpellKnown(DISENCHANT)
     if known and not cfg.enchanterName then
