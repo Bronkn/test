@@ -16,6 +16,7 @@
 - **Einstellungen:** `/kontor einstellungen`.
 - **Verkaufsliste:** Korb-Items in Phase „Abstoßen“ erscheinen jetzt auch (mit „K“ markiert).
 - Datenmodell Version 4 (Migration ergänzt nur).
+- Vor der Auslieferung durch eine zweite Prüfung korrigiert: Umschalt-Klick in Kontor-Felder (Hook auf `ChatFrameUtil.InsertLink`), Export lässt sich wieder importieren, gelöschte Rezeptvorlagen kommen nicht zurück, Bestand auf 0 korrigierbar, Entzauber-Knopf nicht an das Fenster gebunden und im Kampf nicht neu zu öffnen, Berufe bei leerem ersten Slot, optionale Zutaten beim Rezept-Import ignoriert, Enter/Escape in Eingabedialogen, Fehlschlag nicht doppelt protokolliert, „1,5g“ als 1g 50s.
 
 
 ### 0.4.1 – Verkaufsliste ohne Mindestwert

@@ -160,8 +160,10 @@ local RECIPE_TEMPLATES = {
 -- anything the user edited (Nachtrag 3, 5 last test).
 function Kontor:ApplyTemplateExtras()
     local db = self.db
+    db.templatesApplied = db.templatesApplied or {}
     for _, t in ipairs(RECIPE_TEMPLATES) do
-        if db.recipes[t.key] == nil then
+        -- Each template only once: recipes the user deleted or replaced stay so.
+        if not db.templatesApplied[t.key] and db.recipes[t.key] == nil then
             local reagents = {}
             for _, r in ipairs(t.reagents) do
                 table.insert(reagents, { itemID = r.itemID, name = r.name, qty = r.qty, vendor = r.vendor })
@@ -171,6 +173,7 @@ function Kontor:ApplyTemplateExtras()
                 profession = t.profession, skill = t.skill, source = "vorlage",
             }
         end
+        db.templatesApplied[t.key] = true
     end
     for _, basket in ipairs(db.baskets) do
         for itemID, item in pairs(basket.items) do

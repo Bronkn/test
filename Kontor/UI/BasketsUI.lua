@@ -26,6 +26,12 @@ local function textDialog(name, text, button, onAccept)
             local box = editBoxOf(self)
             Kontor:SafeCall("Körbe", onAccept, box and box:GetText() or "", data)
         end,
+        EditBoxOnEnterPressed = function(box)
+            local dialog = box:GetParent()
+            StaticPopupDialogs[dialog.which].OnAccept(dialog, dialog.data)
+            dialog:Hide()
+        end,
+        EditBoxOnEscapePressed = function(box) box:GetParent():Hide() end,
         timeout = 0, whileDead = true, hideOnEscape = true,
     }
 end

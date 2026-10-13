@@ -8,9 +8,12 @@ function Kontor:ParseMoney(text)
     text = strtrim((text or ""):lower())
     if text == "" then return nil end
     local plain = text:gsub(",", ".")
-    if plain:match("^%d+%.?%d*$") then
-        return math.floor(tonumber(plain) * 10000 + 0.5)
+    -- decimal gold, with or without "g": "1.5", "1,5g"
+    local gold = plain:match("^(%d+%.?%d*)%s*g?$")
+    if gold and (plain:find("%.") or not plain:find("[sc]")) then
+        return math.floor(tonumber(gold) * 10000 + 0.5)
     end
+    if plain:match("%d[%.]%d") then return nil end -- "1.5s" and the like: unclear
     local total, found = 0, false
     for num, unit in text:gmatch("(%d+)%s*([gsck])") do
         found = true
@@ -66,22 +69,29 @@ function Kontor:CreateInput(parent, width)
     return box
 end
 
+-- Lets Shift-click put links into another edit box (e.g. multi-line input).
+function Kontor:RegisterLinkTarget(box)
+    table.insert(linkTargets, box)
+end
+
 local function insertLink(link)
     if not link then return end
     for _, box in ipairs(linkTargets) do
         if box:IsVisible() and box:HasFocus() then
-            box:SetText(link)
+            if box:IsMultiLine() then box:Insert(link) else box:SetText(link) end
             return true
         end
     end
 end
 
 -- Blizzard calls this on Shift-click; the hook only acts while one of our
--- boxes has the focus (the chat input is then closed).
-if ChatEdit_InsertLink then
-    hooksecurefunc("ChatEdit_InsertLink", insertLink)
-elseif ChatFrameUtil and ChatFrameUtil.InsertLink then
+-- boxes has the focus (the chat input is then closed). In the 12.x UI the
+-- global ChatEdit_InsertLink is only an alias; Blizzard's code calls
+-- ChatFrameUtil.InsertLink, so that one must be hooked.
+if ChatFrameUtil and ChatFrameUtil.InsertLink then
     hooksecurefunc(ChatFrameUtil, "InsertLink", insertLink)
+elseif ChatEdit_InsertLink then
+    hooksecurefunc("ChatEdit_InsertLink", insertLink)
 end
 
 function Kontor:CreateButton(parent, text, width, onClick)

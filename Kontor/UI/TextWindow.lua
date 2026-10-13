@@ -91,6 +91,7 @@ function Kontor:ShowInputWindow(id, title, hint, onAccept)
         editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
         scroll:SetScrollChild(editBox)
         frame.editBox = editBox
+        Kontor:RegisterLinkTarget(editBox)
 
         frame.hint = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
         frame.hint:SetPoint("TOPLEFT", 64, -40)

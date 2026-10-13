@@ -53,6 +53,18 @@ end
 local win, secure
 local pendingSecureUpdate = false
 
+-- The secure button sits on UIParent, below the window but not anchored to
+-- it: anchoring would make our window protected, so it could no longer be
+-- moved or closed in combat. Placed out of combat only.
+local function placeSecure()
+    if not (secure and win) or InCombatLockdown() then return end
+    local x, bottom = win:GetCenter(), win:GetBottom()
+    if not x or not bottom then return end
+    local scale = win:GetEffectiveScale() / UIParent:GetEffectiveScale()
+    secure:ClearAllPoints()
+    secure:SetPoint("BOTTOM", UIParent, "BOTTOMLEFT", x * scale, bottom * scale + 16)
+end
+
 local function spellName()
     return (C_Spell and C_Spell.GetSpellName and C_Spell.GetSpellName(DISENCHANT)) or "Entzaubern"
 end
@@ -70,6 +82,7 @@ local function updateSecure()
     local shown = win and win:IsShown()
     secure:SetShown(shown and true or false)
     if not shown then return end
+    placeSecure()
     local first = win.candidates and win.candidates[1]
     if first then
         -- /stopmacro [combat] keeps the button inert in combat (Nachtrag 2, 7).
@@ -167,13 +180,21 @@ function Kontor:ShowDisenchantWindow()
         self:Print("Dieser Charakter kann nicht entzaubern.")
         return
     end
+    if InCombatLockdown() then
+        self:Print("Das Entzauber-Fenster geht im Kampf nicht auf.")
+        return
+    end
     if not win then
         win = createWindow()
-        secure = createSecure()
-        secure:SetPoint("BOTTOM", win, "BOTTOM", 0, 16)
+        win:HookScript("OnDragStop", placeSecure)
     end
     win:Show()
 end
+
+-- Created at login (out of combat), so its attributes can be set.
+Kontor:RegisterEvent("PLAYER_LOGIN", "Entzauber-Fenster", function()
+    secure = createSecure()
+end)
 
 Kontor:RegisterEvent("BAG_UPDATE_DELAYED", "Entzauber-Fenster", function()
     if win and win:IsShown() then refresh() end

@@ -65,7 +65,9 @@ end
 
 local function enchantingSkill()
     if not GetProfessions then return nil end
-    for _, index in ipairs({ GetProfessions() }) do
+    local professions = { GetProfessions() } -- prof1, prof2, archaeology, fishing, cooking; any may be nil
+    for i = 1, 5 do
+        local index = professions[i]
         if index then
             local name, _, skillLevel, _, _, _, skillLine = GetProfessionInfo(index)
             if skillLine == ENCHANTING_SKILL_LINE or name == "Verzauberkunst" then
@@ -137,6 +139,7 @@ castFrame:SetScript("OnEvent", function(_, event, unit, ...)
             -- pressing Escape is no failure of the item.
             if event == "UNIT_SPELLCAST_FAILED" and lastError and GetTime() - lastError.at <= ERROR_WINDOW then
                 logFailure(lastError.msg)
+                lastError = nil
             end
             attempt = nil
         end
@@ -251,6 +254,8 @@ local CLASS_TEXT = { armor = "Rüstung", weapon = "Waffe", other = "sonstiges" }
 
 local function buildExport()
     local db = Kontor.db
+    -- Every line starts with "#", so the whole export can be pasted into the
+    -- import window: only the group table above is read there.
     local lines = {
         "Kontor Entzauber-Protokoll, " .. #db.deLog .. " Einträge, " .. #db.deFailures .. " Fehlschläge",
         "Zeit;Item-ID;Item;Qualität;Stufe;Klasse;Mindeststufe;Fertigkeit;Salvager;Ergebnis",
@@ -276,6 +281,7 @@ local function buildExport()
                 .. (f.itemID and C_Item.GetItemInfo(f.itemID) or "?") .. ";" .. tostring(f.msg))
         end
     end
+    for i, line in ipairs(lines) do lines[i] = "# " .. line end
     return table.concat(lines, "\n")
 end
 

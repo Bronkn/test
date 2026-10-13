@@ -24,7 +24,7 @@ local function ledgerDialog(name, prompt, entryType)
             local box = (self.GetEditBox and self:GetEditBox()) or self.editBox
             Kontor:SafeCall("Journal", function()
                 local qty, price = parseQtyPrice(box and box:GetText())
-                if not qty or qty == 0 then
+                if not qty or (qty == 0 and entryType ~= "adjust") then
                     Kontor:Print("Bitte Menge (und Preis je Stück) eingeben, z. B. \"20 1g 50s\".")
                     return
                 end
@@ -41,6 +41,12 @@ local function ledgerDialog(name, prompt, entryType)
                 end
             end)
         end,
+        EditBoxOnEnterPressed = function(box)
+            local dialog = box:GetParent()
+            StaticPopupDialogs[dialog.which].OnAccept(dialog, dialog.data)
+            dialog:Hide()
+        end,
+        EditBoxOnEscapePressed = function(box) box:GetParent():Hide() end,
         timeout = 0, whileDead = true, hideOnEscape = true,
     }
 end

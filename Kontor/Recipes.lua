@@ -160,14 +160,28 @@ function Kontor:ImportRecipe(link)
     local reagents = {}
     for _, slot in ipairs(schematic.reagentSlotSchematics or {}) do
         local first = slot.reagents and slot.reagents[1]
-        if first and first.itemID and (slot.quantityRequired or 0) > 0 then
+        if first and first.itemID and slot.required ~= false and (slot.quantityRequired or 0) > 0 then
             table.insert(reagents, { itemID = first.itemID, qty = slot.quantityRequired })
         end
     end
     local product = schematic.outputItemID
-    -- A template stored under its name is replaced as well.
+    -- Templates stored under a name (no product ID) are replaced as well:
+    -- matched by name, or by their known reagents all appearing in the import.
     local name = C_Item.GetItemInfo(product)
-    if name and self.db.recipes[name] then self.db.recipes[name] = nil end
+    local importedIDs = {}
+    for _, r in ipairs(reagents) do importedIDs[r.itemID] = true end
+    for key, recipe in pairs(self.db.recipes) do
+        if type(key) == "string" and recipe.source == "vorlage" then
+            local allKnownMatch, anyKnown = true, false
+            for _, r in ipairs(recipe.reagents or {}) do
+                if r.itemID and not r.vendor then
+                    anyKnown = true
+                    if not importedIDs[r.itemID] then allKnownMatch = false end
+                end
+            end
+            if key == name or (anyKnown and allKnownMatch) then self.db.recipes[key] = nil end
+        end
+    end
     local old = self.db.recipes[product] or {}
     -- Fixed prices the user entered for vendor reagents are kept.
     for _, r in ipairs(reagents) do
@@ -189,7 +203,9 @@ end
 Kontor:RegisterEvent("PLAYER_LOGIN", "Rezepte", function()
     if not GetProfessions then return end
     local profs = {}
-    for _, index in ipairs({ GetProfessions() }) do
+    local professions = { GetProfessions() } -- any of the five may be nil
+    for i = 1, 5 do
+        local index = professions[i]
         if index then
             local name, _, level = GetProfessionInfo(index)
             if name then profs[name] = level end
