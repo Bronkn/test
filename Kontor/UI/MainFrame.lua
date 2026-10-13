@@ -88,9 +88,36 @@ local function createMainFrame()
     return frame
 end
 
+local openedWithAH = false
+
 function Kontor:ToggleMainFrame()
     if not mainFrame then
         mainFrame = createMainFrame()
     end
+    openedWithAH = false
     mainFrame:SetShown(not mainFrame:IsShown())
+end
+
+-- Opens the window together with the AH (wish of the user, 13.10.2026).
+-- Without a saved position it is placed right next to the AH window.
+function Kontor:OpenMainFrameWithAH()
+    if not self.db.config.autoOpenWithAH then return end
+    if not mainFrame then
+        mainFrame = createMainFrame()
+    end
+    if mainFrame:IsShown() then return end
+    if not self.db.ui.main and AuctionHouseFrame then
+        mainFrame:ClearAllPoints()
+        mainFrame:SetPoint("TOPLEFT", AuctionHouseFrame, "TOPRIGHT", 12, 0)
+    end
+    openedWithAH = true
+    mainFrame:Show()
+end
+
+-- Closes it with the AH, but only if it was opened by the AH.
+function Kontor:CloseMainFrameWithAH()
+    if mainFrame and openedWithAH then
+        mainFrame:Hide()
+    end
+    openedWithAH = false
 end

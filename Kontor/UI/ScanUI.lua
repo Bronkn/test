@@ -74,6 +74,7 @@ function Kontor:OnAuctionHouseShown()
         tag:SetPoint("RIGHT", button, "LEFT", -4, 0)
         tag:SetText("Kontor")
     end
+    self:OpenMainFrameWithAH()
     self:UpdateScanWidgets()
 end
 
@@ -93,21 +94,26 @@ StaticPopupDialogs["KONTOR_SCAN_DONE"] = {
     hideOnEscape = true,
 }
 
-function Kontor:OnScanFinished(complete, itemCount, duration, reason)
+function Kontor:OnScanFinished(complete, itemCount, duration, reason, ranThrough)
     ticker:Hide()
     self:UpdateScanWidgets()
     local durationText = self:FormatDuration(duration)
 
-    if complete then
+    if ranThrough then
         self:Print("Scan fertig: " .. itemCount .. " Items in " .. durationText .. ". Details: /kontor scaninfo")
+        local note = ""
+        if not complete then
+            note = "\n\n|cffff8800Achtung: " .. (reason or "Scan unvollständig")
+                .. ". Details: /kontor scaninfo|r"
+        end
         StaticPopup_Show("KONTOR_SCAN_DONE",
-            "Kontor: Scan fertig.\n\n" .. itemCount .. " Items in " .. durationText .. ".\n\n"
+            "Kontor: Scan fertig.\n\n" .. itemCount .. " Items in " .. durationText .. "." .. note .. "\n\n"
             .. "WoW speichert die Daten erst beim Ausloggen oder Neuladen.\n"
             .. "\"Jetzt sichern\" lädt die Oberfläche neu und speichert sofort.")
     else
         self:Print("Scan abgebrochen (" .. (reason or "unbekannt") .. "). "
             .. itemCount .. " Items aktualisiert, der Scan gilt als unvollständig. "
-            .. "/reload sichert die bisher gelesenen Preise.")
+            .. "/kontor sichern oder /reload sichert die bisher gelesenen Preise.")
     end
 end
 
@@ -123,6 +129,7 @@ function Kontor:PrintScanInfo()
         .. self:FormatDuration(last.durationSec) .. (last.complete and "" or " (unvollständig)") .. ".")
     for _, q in ipairs(last.queries or {}) do
         DEFAULT_CHAT_FRAME:AddMessage("  " .. q.label .. ": " .. q.items .. " Items"
-            .. (q.timedOut and " (keine vollständige Antwort)" or ""))
+            .. (q.timedOut and " (keine vollständige Antwort)" or "")
+            .. (q.capped and " |cffff8800(abgeschnitten)|r" or ""))
     end
 end

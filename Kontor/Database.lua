@@ -16,6 +16,7 @@ local DEFAULTS = {
         minMargin = 0.20,
         depthUnits = 20,
         tooltipEnabled = true,
+        autoOpenWithAH = true, -- Kontor window opens and closes with the AH
         -- Nachtrag 1
         fixedPriceFactor = 0.95,
         craftThreshold = 1.5,

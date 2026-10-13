@@ -3,10 +3,11 @@
 -- quantity per item ID for the current market. Processing happens in small
 -- portions per frame and every request waits for the throttle system.
 --
--- One query without filters does not return the whole AH in Forever (test
--- 13.10.2026: Pyrit and Seelenstaub missing). So the scan runs one query per
--- item class, like the categories of the AH window, and a final query
--- without filters for anything outside these classes.
+-- One query without filters does not return the whole AH in Forever, and
+-- the queries for consumables and trade goods stopped at exactly 300 items
+-- (test 13.10.2026). So the scan runs one query per item class; a query that
+-- hits the cap is split into subclasses, and those into qualities. A final
+-- query without filters catches anything outside these classes.
 
 local _, Kontor = ...
 
@@ -16,29 +17,56 @@ local QUERY_TIMEOUT = 15 -- seconds without an answer before a query is skipped
 local Scan = {}
 Kontor.Scan = Scan
 
--- Consumable, Container, Weapon, Gem, Armor, Reagent, Projectile, Trade Goods,
--- Item Enhancement, Recipe, Quiver, Quest, Key, Miscellaneous, Glyph, Profession
-local ITEM_CLASSES = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16, 19 }
+-- Consumable, Container, Weapon, Armor, Reagent, Projectile, Trade Goods,
+-- Item Enhancement, Recipe, Quiver, Quest, Key, Miscellaneous
+local ITEM_CLASSES = { 0, 1, 2, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15 }
+local RESULT_CAP = 300 -- a query returning exactly this many rows was cut off
+local QUALITIES = { { 6, "Schlecht" }, { 7, "Verbreitet" }, { 8, "Selten" }, { 9, "Rar" }, { 10, "Episch" } }
+
+local function className(classID)
+    return (C_Item.GetItemClassInfo and C_Item.GetItemClassInfo(classID)) or ("Klasse " .. classID)
+end
 
 local function buildQueries()
     local list = {}
     for _, classID in ipairs(ITEM_CLASSES) do
-        local name = C_Item.GetItemClassInfo and C_Item.GetItemClassInfo(classID)
-        table.insert(list, { label = name or ("Klasse " .. classID), classID = classID })
+        table.insert(list, { label = className(classID), classID = classID, level = "class" })
     end
-    table.insert(list, { label = "ohne Filter" })
+    table.insert(list, { label = "ohne Filter", level = "all" })
     return list
+end
+
+-- Finer queries replacing a capped one: subclasses, then qualities.
+local function splitQuery(q)
+    local parts = {}
+    if q.level == "class" and C_Item.GetItemSubClassInfo then
+        for sub = 0, 30 do
+            local name = C_Item.GetItemSubClassInfo(q.classID, sub)
+            if name and name ~= "" then
+                table.insert(parts, { label = q.label .. " / " .. name, classID = q.classID,
+                    subClassID = sub, level = "sub" })
+            end
+        end
+    elseif q.level == "sub" then
+        for _, quality in ipairs(QUALITIES) do
+            table.insert(parts, { label = q.label .. " / " .. quality[2], classID = q.classID,
+                subClassID = q.subClassID, quality = quality[1], level = "quality" })
+        end
+    end
+    return parts
 end
 
 -- Scan state, reset by start()
 local state = "idle" -- "idle" | "waitingThrottle" | "running"
 local market, prices
 local startTime, lastActivity
-local queue, queuePos
+-- Rows waiting for processing. queueHead/queueTail are explicit indices:
+-- processed slots are cleared, so the length operator # must not be used.
+local queue, queueHead, queueTail
 local variants -- itemID -> { [variantKey] = { p, q } }
 local itemCount
 local requestPending, fullResults, waitingForMore
-local queries, queryIndex, queryItems -- queryItems: itemIDs seen by the current query
+local queries, queryIndex, queryItems, queryRows -- itemIDs / variant keys seen by the current query
 local ownQuery -- true while our own SendBrowseQuery call runs
 
 local worker = CreateFrame("Frame")
@@ -81,6 +109,7 @@ local function processRow(row)
         itemCount = itemCount + 1
     end
     local variantKey = (key.itemLevel or 0) .. ":" .. (key.itemSuffix or 0)
+    queryRows[itemID .. ":" .. variantKey] = true
     byVariant[variantKey] = { p = row.minPrice, q = row.totalQuantity or 0 }
 
     -- Several variants: smallest price, quantities summed (Pflichtenheft 4.1).
@@ -101,7 +130,8 @@ local function processRow(row)
     entry.listed = true
 end
 
-local function finish(complete, reason)
+-- ranThrough: all queries were sent (the scan was not aborted).
+local function finish(complete, reason, ranThrough)
     worker:Hide()
     local duration = math.floor(GetTime() - startTime + 0.5)
     local data = getMarketData(market, true)
@@ -117,12 +147,14 @@ local function finish(complete, reason)
 
     local diag = {}
     for _, q in ipairs(queries) do
-        if q.items then table.insert(diag, { label = q.label, items = q.items, timedOut = q.timedOut }) end
+        if q.items then
+            table.insert(diag, { label = q.label, items = q.items, timedOut = q.timedOut, capped = q.capped })
+        end
     end
     data.lastScan = { t = Scan.startedAt, complete = complete, itemCount = itemCount, durationSec = duration,
         queries = diag }
     state = "idle"
-    Kontor:OnScanFinished(complete, itemCount, duration, reason)
+    Kontor:OnScanFinished(complete, itemCount, duration, reason, ranThrough)
 end
 
 local function sendQuery()
@@ -134,10 +166,10 @@ local function sendQuery()
             { sortOrder = sortOrder.Price, reverseSort = false },
             { sortOrder = sortOrder.Name, reverseSort = false },
         },
-        filters = {},
-        itemClassFilters = current.classID and { { classID = current.classID } } or {},
+        filters = current.quality and { current.quality } or {},
+        itemClassFilters = current.classID and { { classID = current.classID, subClassID = current.subClassID } } or {},
     }
-    queryItems = {}
+    queryItems, queryRows = {}, {}
     fullResults = false
     state = "running"
     requestPending = true
@@ -161,7 +193,8 @@ end
 
 local function enqueue(rows)
     for _, row in ipairs(rows or {}) do
-        table.insert(queue, row)
+        queue[queueTail] = row
+        queueTail = queueTail + 1
     end
     requestPending = false
     lastActivity = GetTime()
@@ -171,32 +204,42 @@ end
 
 worker:SetScript("OnUpdate", function()
     Kontor:SafeCall("Scan", function()
-        local stop = math.min(queuePos + ROWS_PER_FRAME - 1, #queue)
-        for i = queuePos, stop do
+        local stop = math.min(queueHead + ROWS_PER_FRAME, queueTail) - 1
+        for i = queueHead, stop do
             processRow(queue[i])
             queue[i] = nil
         end
-        queuePos = stop + 1
+        queueHead = stop + 1
 
-        if queuePos > #queue then
-            queue, queuePos = {}, 1
+        if queueHead >= queueTail then
+            queue, queueHead, queueTail = {}, 1, 1
             local timedOut = GetTime() - lastActivity > QUERY_TIMEOUT
             if (fullResults and state == "running") or timedOut then
                 local q = queries[queryIndex]
                 q.items = Kontor:CountKeys(queryItems)
                 q.timedOut = timedOut and not fullResults
-                if queryIndex == #queries then
-                    -- A skipped query means items may be missing: then the scan
-                    -- must not mark anything as "not listed".
-                    local allAnswered = true
-                    for _, query in ipairs(queries) do
-                        if query.timedOut then allAnswered = false end
+                if Kontor:CountKeys(queryRows) == RESULT_CAP and q.level ~= "all" then
+                    local parts = splitQuery(q)
+                    if #parts == 0 then
+                        q.capped = true
                     end
-                    finish(allAnswered, not allAnswered and "nicht alle Abfragen beantwortet" or nil)
+                    for i, part in ipairs(parts) do
+                        table.insert(queries, queryIndex + i, part)
+                    end
+                end
+                if queryIndex == #queries then
+                    -- A skipped or cut-off query means items may be missing:
+                    -- then the scan must not mark anything as "not listed".
+                    local problem
+                    for _, query in ipairs(queries) do
+                        if query.timedOut then problem = "nicht alle Abfragen beantwortet" end
+                        if query.capped then problem = problem or "manche Abfragen bei 300 Items abgeschnitten" end
+                    end
+                    finish(problem == nil, problem, true)
                     return
                 end
                 queryIndex = queryIndex + 1
-                queryItems, fullResults, requestPending, waitingForMore = {}, false, false, false
+                queryItems, queryRows, fullResults, requestPending, waitingForMore = {}, {}, false, false, false
                 lastActivity = GetTime()
                 if C_AuctionHouse.IsThrottledMessageSystemReady() then
                     sendQuery()
@@ -223,11 +266,11 @@ function Scan:Start()
     startTime = GetTime()
     Scan.startedAt = time()
     lastActivity = startTime
-    queue, queuePos = {}, 1
+    queue, queueHead, queueTail = {}, 1, 1
     variants = {}
     itemCount = 0
     requestPending, fullResults, waitingForMore = false, false, false
-    queries, queryIndex, queryItems = buildQueries(), 1, {}
+    queries, queryIndex, queryItems, queryRows = buildQueries(), 1, {}, {}
 
     if C_AuctionHouse.IsThrottledMessageSystemReady() then
         sendQuery()
@@ -254,6 +297,7 @@ Kontor:RegisterEvent("AUCTION_HOUSE_CLOSED", "Scan", function()
     Kontor.ahOpen = false
     Scan:Abort("Auktionshaus geschlossen")
     Kontor:UpdateScanWidgets()
+    Kontor:CloseMainFrameWithAH()
 end)
 
 Kontor:RegisterEvent("AUCTION_HOUSE_THROTTLED_SYSTEM_READY", "Scan", function()

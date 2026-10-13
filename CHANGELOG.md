@@ -2,6 +2,15 @@
 
 ## [Unveröffentlicht]
 
+### 0.3.2 – Scan verliert keine Zeilen mehr
+- **Fehler behoben (Ursache der fehlenden Items):** Kam eine neue Ergebnisseite an, während die vorige noch verarbeitet wurde, konnte die Warteschlange des Scans Zeilen verlieren. Daher stammten die „genau 300 Items“ bei Verbrauchbar und Handwerkswaren (300 = Zeilen pro Bild) und das fehlende Pyrit.
+- Liefert eine Abfrage trotzdem genau 300 Zeilen, teilt der Scan sie automatisch in Unterklassen und dann in Qualitäten auf. `/kontor scaninfo` markiert abgeschnittene Abfragen.
+- Klassen ohne Inhalt in Forever (Juwelen, Glyphen, Berufe) werden nicht mehr abgefragt.
+- **Neu:** Das Kontor-Fenster öffnet sich mit dem AH (beim ersten Mal rechts daneben) und schließt sich mit ihm, wenn es so geöffnet wurde. Abschaltbar mit `/kontor autoauf`.
+- **Neu:** `/kontor sichern` speichert sofort (lädt die Oberfläche neu).
+- Scan-Zusammenfassung erscheint auch bei unvollständigem Durchlauf, mit Hinweis.
+
+
 ### 0.3.1 – Scan nach Kategorien
 - **Fehler behoben:** Eine einzige Abfrage ohne Filter lieferte in Forever nicht das ganze AH (Pyrit und Seelenstaub fehlten, obwohl gelistet). Der Scan fragt jetzt jede Item-Klasse einzeln ab und zum Schluss einmal ohne Filter.
 - Fortschritt zeigt „Abfrage n/17“. `/kontor scaninfo` listet, wie viele Items jede Abfrage geliefert hat.

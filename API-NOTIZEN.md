@@ -175,7 +175,12 @@ Fehlt eines davon, lädt das Addon trotzdem; der Fehler steht dann in `/kontor f
 
 ## Erkenntnisse aus dem ersten Scan (13.10.2026, Beta)
 
-- Übersichtsabfrage ohne Suchtext und ohne Filter: **2146 Items in 0:09**, meldet „vollständig“, liefert aber **nicht das ganze AH** (Pyrit und Seelenstaub fehlten, obwohl gelistet). Offener Punkt 4: Abfrage pro Kategorie nötig, ab 0.3.1 umgesetzt, Bestätigung ausstehend.
+- Erster Scan (eine Abfrage ohne Filter): 2146 Items in 0:09; Pyrit und Seelenstaub fehlten.
+  Scan nach Klassen (0.3.1): 2914 Items in 0:25; Verbrauchbar und Handwerkswaren lieferten genau 300.
+  **Ursache war ein Fehler im Addon** (Warteschlange verlor Zeilen, wenn eine Seite während der
+  Verarbeitung ankam; 300 = Zeilen pro Bild), behoben in 0.3.2. Ob eine Abfrage ohne Filter allein
+  das ganze AH liefert (offener Punkt 4), zeigt der nächste Scan: „ohne Filter“ in `/kontor scaninfo`
+  sollte dann etwa die Gesamtzahl erreichen.
 - Tiefstpreise stimmen mit dem AH-Fenster überein, Markttiefe und Kauf-Erkennung funktionieren (Testliste Block B).
 - Blizzards AH-Fenster hat den Scan nicht durch eigene Suchen abgebrochen.
 

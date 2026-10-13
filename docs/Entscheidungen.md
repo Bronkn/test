@@ -38,3 +38,16 @@ Testliste: `docs/Testliste-M2-M5b.md`.
   in den Taschen gesperrt ist. Ist nicht genau ein Item gesperrt, wird nichts protokolliert.
   Der Salvager-Schalter ist bis zum Entzauber-Fenster (M12) der Befehl `/kontor salvager`.
   `/kontor entzauber export` zeigt in M5b das Rohprotokoll; die ausgewertete Gruppentabelle folgt mit M11.
+
+## 13.10.2026 – Kontor-Fenster mit dem AH
+
+Wunsch des Nutzers: Das Kontor-Fenster öffnet sich automatisch mit dem Auktionshaus und schließt mit
+ihm (nur wenn es so geöffnet wurde). Standard an, abschaltbar mit `/kontor autoauf`
+(Einstellung `autoOpenWithAH`). Ohne gespeicherte Position steht es rechts neben dem AH-Fenster.
+
+## 13.10.2026 – Scan nach Klassen
+
+Der Scan fragt jede Item-Klasse einzeln ab und zum Schluss einmal ohne Filter. Abfragen mit genau
+300 Zeilen werden in Unterklassen und Qualitäten aufgeteilt. Ob das nach der Fehlerbehebung in 0.3.2
+noch nötig ist, entscheiden die Zahlen aus `/kontor scaninfo`; falls nicht, kann der Scan wieder auf
+eine Abfrage reduziert werden (schneller).

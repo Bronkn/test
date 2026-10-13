@@ -9,6 +9,8 @@ local HELP = {
     "/kontor scaninfo - Items je Abfrage beim letzten Scan",
     "/kontor tiefe <Item-Link> - Preistreppe im AH (nur bei offenem AH)",
     "/kontor tooltip - Preiszeile im Tooltip an/aus",
+    "/kontor autoauf - Fenster mit dem AH öffnen an/aus",
+    "/kontor sichern - Daten jetzt speichern (lädt die Oberfläche neu)",
     "/kontor entzauber export - Entzauber-Protokoll zum Kopieren",
     "/kontor salvager - Arcane Salvager aktiv/nicht aktiv",
     "/kontor fehler - Fehlerprotokoll zum Kopieren",
@@ -71,6 +73,12 @@ local commands = {
         end
     end,
     salvager = function() Kontor:ToggleSalvager() end,
+    autoauf = function()
+        local cfg = Kontor.db.config
+        cfg.autoOpenWithAH = not cfg.autoOpenWithAH
+        Kontor:Print("Fenster mit dem AH öffnen: " .. (cfg.autoOpenWithAH and "an" or "aus") .. ".")
+    end,
+    sichern = function() ReloadUI() end,
     testfehler = function()
         error("Testfehler, absichtlich ausgelöst mit /kontor testfehler")
     end,

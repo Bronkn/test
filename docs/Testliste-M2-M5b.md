@@ -36,11 +36,12 @@ Zum Melden reicht: Nummer + „ok“ oder was anders war. Bei Fehlermeldungen bi
 - [x] **B9** AH wieder öffnen, Scan bis zum Ende laufen lassen, diesmal **„Jetzt sichern“** klicken.
   Nach dem Neuladen liefert `/kontor preis` für die Items aus B4 weiterhin Preise.
 
-**Nachtest mit 0.3.1 (Scan nach Kategorien):**
+**Nachtest mit 0.3.2 (Scan-Fehler behoben):**
 
-- [ ] **B10** Neuen Scan starten. Der Fortschritt zeigt „Abfrage n/17“. Am Ende Anzahl Items und Dauer notieren.
+- [ ] **B10** Neuen Scan starten. Der Fortschritt zeigt „Abfrage n/14“ (mehr, wenn eine Klasse aufgeteilt wird). Am Ende Anzahl Items und Dauer notieren.
 - [ ] **B11** `/kontor scaninfo` → Liste der Abfragen mit Item-Zahlen (Screenshot).
 - [ ] **B12** `/kontor preis` für Pyrit und Seelenstaub: beide mit Preis, **ohne** „nicht gelistet“.
+- [ ] **B13** AH schließen und wieder öffnen: Das Kontor-Fenster geht mit auf und mit zu.
 
 Falls ein Scan ohne dein Zutun mit „andere Suche im Auktionshaus gestartet“ abbricht: bitte melden.
 
