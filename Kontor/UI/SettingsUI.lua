@@ -24,6 +24,7 @@ local CHECKS = {
     { key = "deTooltip", label = "Entzauber-Zeile im Tooltip" },
     { key = "usageTooltip", label = "Verwendungs-Notiz im Tooltip" },
     { key = "autoOpenWithAH", label = "Kontor-Fenster mit dem AH öffnen" },
+    { key = "minimapButton", label = "Minimap-Knopf (nur Verzauberer)" },
 }
 
 local win
@@ -53,6 +54,7 @@ local function save()
         end
     end
     for _, c in ipairs(CHECKS) do cfg[c.key] = win.checks[c.key]:GetChecked() and true or false end
+    Kontor:UpdateMinimapButton()
     Kontor:FireChange()
     Kontor:Print("Einstellungen gespeichert.")
     load()

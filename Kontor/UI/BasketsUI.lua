@@ -142,8 +142,14 @@ local function fillRow(row, itemID)
     local item = basket.items[itemID]
     local c = row.cells
     local name, _, quality = C_Item.GetItemInfo(itemID)
-    local color = quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
-    c.name:SetText((color and color.hex or "") .. (name or ("Item " .. itemID)) .. (color and "|r" or ""))
+    if name then
+        local color = quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
+        c.name:SetText((color and color.hex or "") .. name .. (color and "|r" or ""))
+    else
+        -- not in the client cache yet; GET_ITEM_INFO_RECEIVED redraws the row
+        if C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
+        c.name:SetText("|cff888888lädt ...|r")
+    end
 
     local entry = Kontor:GetPrice(itemID)
     if entry and entry.p then
@@ -337,3 +343,29 @@ function Kontor:BuildBasketView(frame)
     frame:HookScript("OnShow", refresh)
     Kontor:OnChange(refresh)
 end
+
+-- Item names arrive a moment later when the client has not cached them.
+local redrawPending = false
+Kontor:RegisterEvent("GET_ITEM_INFO_RECEIVED", "Körbe", function()
+    if redrawPending then return end
+    redrawPending = true
+    C_Timer.After(0.2, function()
+        redrawPending = false
+        Kontor:FireChange() -- every open Kontor window redraws its names
+    end)
+end)
+
+-- Ask the client for all watchlist and recipe items right after login, so
+-- the names are known before the window is opened.
+Kontor:RegisterEvent("PLAYER_LOGIN", "Körbe", function()
+    if not C_Item.RequestLoadItemDataByID then return end
+    for _, basket in ipairs(Kontor.db.baskets) do
+        for itemID in pairs(basket.items) do C_Item.RequestLoadItemDataByID(itemID) end
+    end
+    for _, recipe in pairs(Kontor.db.recipes) do
+        if recipe.product then C_Item.RequestLoadItemDataByID(recipe.product) end
+        for _, r in ipairs(recipe.reagents or {}) do
+            if r.itemID then C_Item.RequestLoadItemDataByID(r.itemID) end
+        end
+    end
+end)

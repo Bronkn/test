@@ -17,6 +17,7 @@ local DEFAULTS = {
         depthUnits = 20,
         tooltipEnabled = true,
         autoOpenWithAH = true, -- Kontor window opens and closes with the AH
+        minimapButton = true, -- minimap button for the disenchant window (only for enchanters)
         -- Nachtrag 1
         fixedPriceFactor = 0.95,
         craftThreshold = 1.5,

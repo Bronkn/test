@@ -35,4 +35,5 @@ UI\RecipeUI.lua
 UI\DisenchantUI.lua
 UI\MailUI.lua
 UI\SettingsUI.lua
+UI\MinimapButton.lua
 Commands.lua
