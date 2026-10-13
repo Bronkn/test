@@ -130,9 +130,13 @@ local function positionText(basket, item, itemID)
     local stock, avg = Kontor:GetPosition(itemID)
     local char = Kontor:GetCharacterCount(itemID)
     local lines = {}
+    -- With Syndicator the comparison uses all characters, otherwise this one.
+    local account = Kontor:GetAccountCount(itemID)
     local stockLine = "Bestand (Journal): " .. stock .. "  ·  auf diesem Charakter: " .. char
-    if char ~= stock then stockLine = stockLine .. " |cffff8800(weicht ab)|r" end
+    if (account or char) ~= stock then stockLine = stockLine .. " |cffff8800(weicht ab)|r" end
     table.insert(lines, stockLine)
+    local accountText = Kontor:AccountCountText(itemID)
+    if accountText then table.insert(lines, accountText) end
     if avg then
         table.insert(lines, "Einstand " .. Kontor:FormatMoney(avg) .. "  ·  Break-even " .. Kontor:FormatMoney(Kontor:BreakEven(avg)))
     end

@@ -5,42 +5,49 @@
 
 local _, Kontor = ...
 
+-- Rules of the sales list for one item. Returns true, AH net unit price,
+-- vendor price, price entry, from basket; or false plus the reason.
+function Kontor:PostingVerdict(itemID, isBound)
+    local db = self.db
+    if isBound then return false, "gebunden" end
+    if db.postExclusions[itemID] then return false, "nicht anbieten" end
+    -- Watchlist items only in phase "Abstoßen" (decision 13.10.2026).
+    local basket, item = self:FindBasketItem(itemID)
+    local selling = basket and self:GetItemPhase(basket, item) == "abstossen"
+    if basket and not selling then return false, "im Korb, nicht Abstoßen" end
+
+    local entry = self:GetPrice(itemID)
+    if not entry or not entry.p then return false, "ohne Scan-Preis" end
+    if entry.listed == false then return false, "zuletzt nicht im AH" end
+    if not self:IsPriceFresh(entry) then return false, "Preis zu alt" end
+
+    local sellPrice, classID = select(11, C_Item.GetItemInfo(itemID))
+    if sellPrice == nil then
+        if C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
+        return false, "Item-Daten laden noch"
+    end
+    if classID == ((Enum.ItemClass and Enum.ItemClass.Questitem) or 12) then return false, "Quest-Item" end
+    local net = self:NetPrice(entry.p)
+    -- vendor is as good: that is Aufräumen's job
+    if net <= sellPrice then return false, "Händler bringt mehr" end
+    return true, net, sellPrice, entry, selling or nil
+end
+
 -- Returns candidate stacks, highest net AH value first, plus a count of
 -- skipped stacks per reason (shown when items are missing from the list).
--- Each: { bag, slot, itemID, link, icon, count, unitPrice, ahNetTotal, vendorTotal, priceTime }
+-- Each: { bag, slot, itemID, link, icon, count, unitPrice, ahNetTotal, vendorTotal, priceTime, fromBasket }
 function Kontor:FindPostingCandidates()
-    local db = self.db
     local list, skipped = {}, {}
-    local function skip(reason) skipped[reason] = (skipped[reason] or 0) + 1 end
 
     self:ForEachBagItem(function(bag, slot, info)
-        local itemID = info.itemID
-        if info.isBound then return skip("gebunden") end
-        if db.postExclusions[itemID] then return skip("nicht anbieten") end
-        -- Watchlist items only in phase "Abstoßen" (decision 13.10.2026).
-        local basket, item = self:FindBasketItem(itemID)
-        local selling = basket and self:GetItemPhase(basket, item) == "abstossen"
-        if basket and not selling then return skip("im Korb, nicht Abstoßen") end
-
-        local entry = self:GetPrice(itemID)
-        if not entry or not entry.p then return skip("ohne Scan-Preis") end
-        if entry.listed == false then return skip("zuletzt nicht im AH") end
-        if not self:IsPriceFresh(entry) then return skip("Preis zu alt") end
-
-        local sellPrice, classID = select(11, C_Item.GetItemInfo(itemID))
-        if sellPrice == nil then
-            if C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
-            return skip("Item-Daten laden noch")
+        local ok, net, sellPrice, entry, fromBasket = self:PostingVerdict(info.itemID, info.isBound)
+        if not ok then
+            skipped[net] = (skipped[net] or 0) + 1
+            return
         end
-        if classID == ((Enum.ItemClass and Enum.ItemClass.Questitem) or 12) then return skip("Quest-Item") end
-
         local count = info.stackCount or 1
-        local net = self:NetPrice(entry.p)
-        -- vendor is as good: that is Aufräumen's job
-        if net <= sellPrice then return skip("Händler bringt mehr") end
-
         table.insert(list, {
-            bag = bag, slot = slot, itemID = itemID, fromBasket = selling or nil,
+            bag = bag, slot = slot, itemID = info.itemID, fromBasket = fromBasket,
             link = info.hyperlink, icon = info.iconFileID,
             count = count, unitPrice = entry.p,
             ahNetTotal = net * count,

@@ -86,3 +86,15 @@ Nachtrag 0.4.1: Die Mindestgrenze von 10 Silber je Stapel wurde auf Wunsch des N
   „unsicher“. Mit Salvager-Haken zählen die Salvager-Gruppen, ersatzweise die normalen.
 - **Verkaufsliste:** Korb-Items erscheinen nur in Phase „Abstoßen“.
 - Phasen, Budget usw. werden über Knöpfe und kleine Eingabedialoge gesetzt (keine Aufklapplisten).
+
+## 13.10.2026 – Minimap-Knopf, Baganator, Syndicator (Wünsche des Nutzers)
+
+- **Minimap-Knopf:** Abweichend von Pflichtenheft 6.3 („optional, Standard aus“) standardmäßig **an**, weil der
+  Nutzer ihn ausdrücklich wünscht; erscheint nur auf Charakteren, die entzaubern können. Abschaltbar.
+- **Baganator** (geprüft gegen Release 834): Ecken-Symbole über `Baganator.API.RegisterCornerWidget`.
+  **Nicht** genutzt: `RegisterJunkPlugin`, weil Baganator Plunder dann ohne Kontors Vorschau verkaufen könnte
+  (Pflichtenheft 6.1).
+- **Syndicator** (geprüft gegen Release 285): `Syndicator.API.GetInventoryInfoByItemID(itemID, true, false)`,
+  gleicher Realm, beide Fraktionen. Die Einkaufsliste rechnet weiter mit dem Bestand des aktuellen
+  Charakters (Nachtrag 1, 4.2).
+- Beide Addons sind optional (`## OptionalDeps`); ohne sie läuft Kontor wie bisher.

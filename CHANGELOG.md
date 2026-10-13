@@ -2,6 +2,13 @@
 
 ## [Unveröffentlicht]
 
+### 0.5.1 – Minimap-Knopf, Baganator und Syndicator
+- **Minimap-Knopf** (nur auf Charakteren mit Entzaubern): Linksklick öffnet das Entzauber-Fenster, Rechtsklick das Kontor-Fenster, ziehen verschiebt ihn. Abschaltbar in den Einstellungen.
+- **Baganator:** vier Ecken-Symbole auf den Taschenfächern: Entzaubern (bzw. an Bankchar schicken), beim Händler verkaufen, im AH verkaufen (oben links, je nach Empfehlung) und Item im Korb (oben rechts). Verschieben oder abschalten in Baganators Einstellungen unter den Ecken-Symbolen.
+- **Syndicator:** Bestand über alle Charaktere des Realms (Taschen, Bank, Post, AH) in der Detailansicht und im Tooltip der Korb-Tabelle; die Abweichungs-Prüfung zum Journal nutzt dann diese Zahl.
+- Item-Namen in den Fenstern: statt „Item 12345“ steht kurz „lädt ...“; alle Korb- und Rezept-Items werden beim Einloggen vorgeladen.
+
+
 ### 0.5.0 – M6 bis M14 und Nachtrag 3 (wartet auf Abnahme)
 - **Körbe (M6):** Hauptfenster mit Körben links und Item-Tabelle rechts (Preis, Alter, Menge, Trend, Bestand, Lagerplätze, Einstand, Break-even, Signal). Korb anlegen, umbenennen, löschen; Phase, Budget, Notiz. Items per Umschalt-Klick, Ziehen oder ID. Detailansicht mit Kauflimit, Zielpreis (auf Festpreis begrenzt), Zielmenge, Festpreis, Lagerlimit, Phase je Item, Verwendung.
 - **Startkonfiguration:** Körbe A, B, C, D, W nach Nachtrag 1 mit den Änderungen aus Nachtrag 3; Rezeptvorlagen und Verwendungs-Notizen. `/kontor vorlage`.

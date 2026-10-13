@@ -96,6 +96,16 @@ Nach Orten sortiert. Zum Melden reicht Nummer + „ok“ oder was anders war. Be
 
 - [ ] **H1** `/kontor einstellungen`: AH-Gebühr auf 6 ändern → Speichern → `/reload` → steht noch auf 6. Danach zurück auf 5.
 
+## I – Neu in 0.5.1 (3 Min.)
+
+- [ ] **I1** Auf dem Verzauberer: Minimap-Knopf mit Entzauber-Symbol. Linksklick öffnet das Entzauber-Fenster,
+  Rechtsklick das Kontor-Fenster, Ziehen verschiebt ihn (Position bleibt nach `/reload`).
+- [ ] **I2** Auf einem Charakter ohne Verzauberkunst: **kein** Minimap-Knopf.
+- [ ] **I3** Baganator-Taschen: Symbole oben links (Entzaubern / Münze für Händler / Münze für AH) und oben rechts
+  (Tasche = Item im Korb). In Baganators Einstellungen bei den Ecken-Symbolen stehen vier „Kontor: …“-Einträge.
+- [ ] **I4** Detailansicht eines Korb-Items: Zeile „Alle Charaktere (Syndicator): N (… Taschen, … Bank …)“.
+- [ ] **I5** Kontor-Fenster direkt nach dem Einloggen öffnen: Item-Namen stehen gleich da (höchstens kurz „lädt ...“).
+
 ---
 
 **Hinweis:** Signale und Entzauber-Empfehlungen brauchen Daten. Direkt nach der Installation ist vieles noch leer

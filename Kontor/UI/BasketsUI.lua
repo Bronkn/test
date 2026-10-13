@@ -326,6 +326,8 @@ function Kontor:BuildBasketView(frame)
         GameTooltip:SetItemByID(itemID)
         local t = Kontor:GetTrend(itemID)
         GameTooltip:AddLine("Menge Trend: " .. Kontor:FormatChange(t.qPrev) .. " / " .. Kontor:FormatChange(t.qWeek), 1, 1, 1)
+        local accountText = Kontor:AccountCountText(itemID)
+        if accountText then GameTooltip:AddLine(accountText, 1, 1, 1) end
         GameTooltip:AddLine("Klick: Details  ·  Rechtsklick: aus dem Korb entfernen", 0.6, 0.6, 0.6)
         GameTooltip:Show()
     end

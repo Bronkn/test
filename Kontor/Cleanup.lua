@@ -17,54 +17,63 @@ local function isQuestItem(bag, slot, classID)
     return false
 end
 
+-- Cleanup rules for one item (Pflichtenheft 4.3, Nachtrag 2, 6). bag/slot
+-- are optional (quest check by slot). Returns
+--   "sell", sellPrice, priceEntry   -- vendor brings at least as much as the AH
+--   "hold"                          -- would qualify, but disenchanting brings more
+--   nil                             -- not a candidate
+function Kontor:CleanupVerdict(itemID, link, quality, isBound, hasNoValue, bag, slot)
+    local db = self.db
+    local cfg = db.config
+    -- 4. bound items are no AH decision; no vendor value at all: skip early
+    if isBound or hasNoValue then return nil end
+    -- 6. quality: at most the configured limit; grey is out of scope (Pflichtenheft 7)
+    if not quality or quality < 1 or quality > cfg.cleanupMaxQuality then return nil end
+    -- 5. watchlist and "never sell"
+    if db.exclusions[itemID] or self:FindBasketItem(itemID) then return nil end
+
+    local sellPrice, classID = select(11, C_Item.GetItemInfo(itemID))
+    if sellPrice == nil then
+        -- item data not loaded yet; GET_ITEM_INFO_RECEIVED triggers a recount
+        if C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
+        return nil
+    end
+    -- 1. vendor price > 0
+    if sellPrice <= 0 then return nil end
+    -- 7. no quest items
+    if classID == QUEST_ITEM_CLASS or (bag and isQuestItem(bag, slot, classID)) then return nil end
+    -- 2. scan price present and fresh. Items without a price are never touched.
+    local entry = self:GetPrice(itemID)
+    if not entry or not entry.p or not self:IsPriceFresh(entry) then return nil end
+    -- 3. vendor >= AH net (plus safety margin)
+    if sellPrice < entry.p * (1 - cfg.ahFee) * (1 + cfg.cleanupMargin) then return nil end
+    -- 8. nothing that brings more when disenchanted (Nachtrag 2, 6)
+    if self:HoldBackForDisenchant(link or itemID, isBound) then return "hold" end
+    return "sell", sellPrice, entry
+end
+
 -- Returns the list of candidate stacks, highest vendor value first, and the
 -- number of stacks held back because disenchanting brings more.
 -- Each: { bag, slot, itemID, link, icon, count, vendorTotal, ahNetTotal, priceTime }
 function Kontor:FindCleanupCandidates()
-    local db = self.db
-    local cfg = db.config
     local list, heldBack = {}, 0
 
     self:ForEachBagItem(function(bag, slot, info)
-        local itemID = info.itemID
-        -- 4. bound items are no AH decision; no vendor value at all: skip early
-        if info.isBound or info.hasNoValue then return end
-        -- 6. quality: at most the configured limit; grey is out of scope (Pflichtenheft 7)
-        local quality = info.quality
-        if not quality or quality < 1 or quality > cfg.cleanupMaxQuality then return end
-        -- 5. watchlist and "never sell"
-        if db.exclusions[itemID] or self:FindBasketItem(itemID) then return end
-
-        local sellPrice, classID = select(11, C_Item.GetItemInfo(itemID))
-        if sellPrice == nil then
-            -- item data not loaded yet; GET_ITEM_INFO_RECEIVED triggers a recount
-            if C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
-            return
-        end
-        -- 1. vendor price > 0
-        if sellPrice <= 0 then return end
-        -- 7. no quest items
-        if isQuestItem(bag, slot, classID) then return end
-        -- 2. scan price present and fresh. Items without a price are never touched.
-        local entry = self:GetPrice(itemID)
-        if not entry or not entry.p or not self:IsPriceFresh(entry) then return end
-        -- 3. vendor >= AH net (plus safety margin)
-        if sellPrice < entry.p * (1 - cfg.ahFee) * (1 + cfg.cleanupMargin) then return end
-        -- 8. nothing that brings more when disenchanted (Nachtrag 2, 6)
-        if self:HoldBackForDisenchant(info.hyperlink or itemID, info.isBound) then
+        local verdict, sellPrice, entry = self:CleanupVerdict(info.itemID, info.hyperlink, info.quality,
+            info.isBound, info.hasNoValue, bag, slot)
+        if verdict == "hold" then
             heldBack = heldBack + 1
-            return
+        elseif verdict == "sell" then
+            local count = info.stackCount or 1
+            table.insert(list, {
+                bag = bag, slot = slot, itemID = info.itemID,
+                link = info.hyperlink, icon = info.iconFileID,
+                count = count,
+                vendorTotal = sellPrice * count,
+                ahNetTotal = self:NetPrice(entry.p) * count,
+                priceTime = entry.t,
+            })
         end
-
-        local count = info.stackCount or 1
-        table.insert(list, {
-            bag = bag, slot = slot, itemID = itemID,
-            link = info.hyperlink, icon = info.iconFileID,
-            count = count,
-            vendorTotal = sellPrice * count,
-            ahNetTotal = self:NetPrice(entry.p) * count,
-            priceTime = entry.t,
-        })
     end)
 
     table.sort(list, function(a, b) return a.vendorTotal > b.vendorTotal end)
