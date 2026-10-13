@@ -9,8 +9,8 @@ function Kontor:UpdateScanWidgets()
     local running = self.Scan:IsRunning()
     local text
     if running then
-        local count, elapsed = self.Scan:GetProgress()
-        text = "Scan läuft: " .. count .. " Items · " .. self:FormatDuration(elapsed)
+        local count, elapsed, step, steps = self.Scan:GetProgress()
+        text = "Scan läuft: " .. count .. " Items · Abfrage " .. step .. "/" .. steps .. " · " .. self:FormatDuration(elapsed)
     elseif not self.ahOpen then
         text = "Scannen geht nur bei geöffnetem Auktionshaus."
     else
@@ -99,7 +99,7 @@ function Kontor:OnScanFinished(complete, itemCount, duration, reason)
     local durationText = self:FormatDuration(duration)
 
     if complete then
-        self:Print("Scan fertig: " .. itemCount .. " Items in " .. durationText .. ".")
+        self:Print("Scan fertig: " .. itemCount .. " Items in " .. durationText .. ". Details: /kontor scaninfo")
         StaticPopup_Show("KONTOR_SCAN_DONE",
             "Kontor: Scan fertig.\n\n" .. itemCount .. " Items in " .. durationText .. ".\n\n"
             .. "WoW speichert die Daten erst beim Ausloggen oder Neuladen.\n"
@@ -108,5 +108,21 @@ function Kontor:OnScanFinished(complete, itemCount, duration, reason)
         self:Print("Scan abgebrochen (" .. (reason or "unbekannt") .. "). "
             .. itemCount .. " Items aktualisiert, der Scan gilt als unvollständig. "
             .. "/reload sichert die bisher gelesenen Preise.")
+    end
+end
+
+-- Items per query of the last scan, to see whether every category arrived.
+function Kontor:PrintScanInfo()
+    local data = self:GetMarketData(false)
+    local last = data and data.lastScan
+    if not last then
+        self:Print("Noch kein Scan in diesem Markt.")
+        return
+    end
+    self:Print("Letzter Scan " .. self:FormatDateTime(last.t) .. ": " .. (last.itemCount or 0) .. " Items in "
+        .. self:FormatDuration(last.durationSec) .. (last.complete and "" or " (unvollständig)") .. ".")
+    for _, q in ipairs(last.queries or {}) do
+        DEFAULT_CHAT_FRAME:AddMessage("  " .. q.label .. ": " .. q.items .. " Items"
+            .. (q.timedOut and " (keine vollständige Antwort)" or ""))
     end
 end

@@ -6,6 +6,7 @@ local HELP = {
     "/kontor - Fenster öffnen oder schließen",
     "/kontor status - Version, Client, Markt und Datenstand",
     "/kontor preis <Item-Link> - letzter Scan-Preis eines Items",
+    "/kontor scaninfo - Items je Abfrage beim letzten Scan",
     "/kontor tiefe <Item-Link> - Preistreppe im AH (nur bei offenem AH)",
     "/kontor tooltip - Preiszeile im Tooltip an/aus",
     "/kontor entzauber export - Entzauber-Protokoll zum Kopieren",
@@ -55,6 +56,7 @@ local commands = {
     end,
     fehler = function() Kontor:ShowErrorFrame() end,
     preis = showPrice,
+    scaninfo = function() Kontor:PrintScanInfo() end,
     tiefe = function(arg) Kontor:QueryDepth(arg) end,
     tooltip = function()
         local cfg = Kontor.db.config

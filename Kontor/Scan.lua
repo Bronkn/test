@@ -1,15 +1,34 @@
 -- Kontor: overview scan of the auction house (Pflichtenheft 4.1).
--- Pages through the browse query, stores lowest unit price and total
+-- Pages through browse queries, stores lowest unit price and total
 -- quantity per item ID for the current market. Processing happens in small
 -- portions per frame and every request waits for the throttle system.
+--
+-- One query without filters does not return the whole AH in Forever (test
+-- 13.10.2026: Pyrit and Seelenstaub missing). So the scan runs one query per
+-- item class, like the categories of the AH window, and a final query
+-- without filters for anything outside these classes.
 
 local _, Kontor = ...
 
 local ROWS_PER_FRAME = 300
-local STALL_TIMEOUT = 60 -- seconds without an answer before the scan gives up
+local QUERY_TIMEOUT = 15 -- seconds without an answer before a query is skipped
 
 local Scan = {}
 Kontor.Scan = Scan
+
+-- Consumable, Container, Weapon, Gem, Armor, Reagent, Projectile, Trade Goods,
+-- Item Enhancement, Recipe, Quiver, Quest, Key, Miscellaneous, Glyph, Profession
+local ITEM_CLASSES = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 15, 16, 19 }
+
+local function buildQueries()
+    local list = {}
+    for _, classID in ipairs(ITEM_CLASSES) do
+        local name = C_Item.GetItemClassInfo and C_Item.GetItemClassInfo(classID)
+        table.insert(list, { label = name or ("Klasse " .. classID), classID = classID })
+    end
+    table.insert(list, { label = "ohne Filter" })
+    return list
+end
 
 -- Scan state, reset by start()
 local state = "idle" -- "idle" | "waitingThrottle" | "running"
@@ -19,6 +38,7 @@ local queue, queuePos
 local variants -- itemID -> { [variantKey] = { p, q } }
 local itemCount
 local requestPending, fullResults, waitingForMore
+local queries, queryIndex, queryItems -- queryItems: itemIDs seen by the current query
 local ownQuery -- true while our own SendBrowseQuery call runs
 
 local worker = CreateFrame("Frame")
@@ -28,8 +48,9 @@ function Scan:IsRunning()
     return state ~= "idle"
 end
 
+-- items so far, seconds elapsed, current query number, number of queries
 function Scan:GetProgress()
-    return itemCount or 0, startTime and (GetTime() - startTime) or 0
+    return itemCount or 0, startTime and (GetTime() - startTime) or 0, queryIndex or 0, queries and #queries or 0
 end
 
 local function getMarketData(key, create)
@@ -52,6 +73,7 @@ local function processRow(row)
         return
     end
     local itemID = key.itemID
+    queryItems[itemID] = true
     local byVariant = variants[itemID]
     if not byVariant then
         byVariant = {}
@@ -93,13 +115,19 @@ local function finish(complete, reason)
         end
     end
 
-    data.lastScan = { t = Scan.startedAt, complete = complete, itemCount = itemCount, durationSec = duration }
+    local diag = {}
+    for _, q in ipairs(queries) do
+        if q.items then table.insert(diag, { label = q.label, items = q.items, timedOut = q.timedOut }) end
+    end
+    data.lastScan = { t = Scan.startedAt, complete = complete, itemCount = itemCount, durationSec = duration,
+        queries = diag }
     state = "idle"
     Kontor:OnScanFinished(complete, itemCount, duration, reason)
 end
 
 local function sendQuery()
     local sortOrder = Enum.AuctionHouseSortOrder or { Price = 0, Name = 1 }
+    local current = queries[queryIndex]
     local query = {
         searchString = "",
         sorts = {
@@ -107,8 +135,10 @@ local function sendQuery()
             { sortOrder = sortOrder.Name, reverseSort = false },
         },
         filters = {},
-        itemClassFilters = {},
+        itemClassFilters = current.classID and { { classID = current.classID } } or {},
     }
+    queryItems = {}
+    fullResults = false
     state = "running"
     requestPending = true
     lastActivity = GetTime()
@@ -150,13 +180,30 @@ worker:SetScript("OnUpdate", function()
 
         if queuePos > #queue then
             queue, queuePos = {}, 1
-            if fullResults then
-                finish(true)
-                return
+            local timedOut = GetTime() - lastActivity > QUERY_TIMEOUT
+            if (fullResults and state == "running") or timedOut then
+                local q = queries[queryIndex]
+                q.items = Kontor:CountKeys(queryItems)
+                q.timedOut = timedOut and not fullResults
+                if queryIndex == #queries then
+                    -- A skipped query means items may be missing: then the scan
+                    -- must not mark anything as "not listed".
+                    local allAnswered = true
+                    for _, query in ipairs(queries) do
+                        if query.timedOut then allAnswered = false end
+                    end
+                    finish(allAnswered, not allAnswered and "nicht alle Abfragen beantwortet" or nil)
+                    return
+                end
+                queryIndex = queryIndex + 1
+                queryItems, fullResults, requestPending, waitingForMore = {}, false, false, false
+                lastActivity = GetTime()
+                if C_AuctionHouse.IsThrottledMessageSystemReady() then
+                    sendQuery()
+                else
+                    state = "waitingThrottle"
+                end
             end
-        end
-        if GetTime() - lastActivity > STALL_TIMEOUT then
-            finish(false, "keine Antwort vom Auktionshaus")
         end
     end)
 end)
@@ -180,6 +227,7 @@ function Scan:Start()
     variants = {}
     itemCount = 0
     requestPending, fullResults, waitingForMore = false, false, false
+    queries, queryIndex, queryItems = buildQueries(), 1, {}
 
     if C_AuctionHouse.IsThrottledMessageSystemReady() then
         sendQuery()

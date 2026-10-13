@@ -175,7 +175,7 @@ Fehlt eines davon, lädt das Addon trotzdem; der Fehler steht dann in `/kontor f
 
 ## Erkenntnisse aus dem ersten Scan (13.10.2026, Beta)
 
-- Übersichtsabfrage ohne Suchtext und ohne Filter liefert das ganze AH: **2146 Items in 0:09** (Pflichtenheft, offene Punkte 3 und 4).
+- Übersichtsabfrage ohne Suchtext und ohne Filter: **2146 Items in 0:09**, meldet „vollständig“, liefert aber **nicht das ganze AH** (Pyrit und Seelenstaub fehlten, obwohl gelistet). Offener Punkt 4: Abfrage pro Kategorie nötig, ab 0.3.1 umgesetzt, Bestätigung ausstehend.
 - Tiefstpreise stimmen mit dem AH-Fenster überein, Markttiefe und Kauf-Erkennung funktionieren (Testliste Block B).
 - Blizzards AH-Fenster hat den Scan nicht durch eigene Suchen abgebrochen.
 

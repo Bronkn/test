@@ -2,6 +2,12 @@
 
 ## [Unveröffentlicht]
 
+### 0.3.1 – Scan nach Kategorien
+- **Fehler behoben:** Eine einzige Abfrage ohne Filter lieferte in Forever nicht das ganze AH (Pyrit und Seelenstaub fehlten, obwohl gelistet). Der Scan fragt jetzt jede Item-Klasse einzeln ab und zum Schluss einmal ohne Filter.
+- Fortschritt zeigt „Abfrage n/17“. `/kontor scaninfo` listet, wie viele Items jede Abfrage geliefert hat.
+- Antwortet eine Abfrage 15 s lang nicht, wird sie übersprungen; der Scan gilt dann als unvollständig und markiert nichts als „nicht gelistet“.
+
+
 ### M3, M4, M5, M5b (0.3.0, wartet auf Abnahme)
 - **Tooltip (M3):** Zeile „AH-Tiefstpreis · Alter“ an jedem Item mit Scan-Preis, grau ab 24 Std., nicht im Kampf. `/kontor tooltip` schaltet sie ab.
 - **Aufräumen (M4):** Knopf über dem Händlerfenster mit Anzahl und Erlös. Vorschau mit Häkchen, Händlererlös, AH-Wert netto, Preisalter. Höchstens 12 Stapel je Durchlauf. Rechtsklick: „Nie verkaufen“. Verkauft wird nur, was noch genau so im Fach liegt.
