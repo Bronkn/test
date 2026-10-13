@@ -71,3 +71,45 @@ end
 function Kontor:RefreshTextWindow(id)
     refresh(windows[id])
 end
+
+-- Window with an editable text field and an "Übernehmen" button.
+-- onAccept(text) returns true to close the window.
+local inputWindows = {}
+
+function Kontor:ShowInputWindow(id, title, hint, onAccept)
+    local frame = inputWindows[id]
+    if not frame then
+        frame = Kontor:CreateWindow("KontorInput_" .. id, title, 640, 420, "input_" .. id)
+        local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
+        scroll:SetPoint("TOPLEFT", 16, -64)
+        scroll:SetPoint("BOTTOMRIGHT", -34, 44)
+        local editBox = CreateFrame("EditBox", nil, scroll)
+        editBox:SetMultiLine(true)
+        editBox:SetAutoFocus(false)
+        editBox:SetFontObject(ChatFontNormal)
+        editBox:SetWidth(580)
+        editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
+        scroll:SetScrollChild(editBox)
+        frame.editBox = editBox
+
+        frame.hint = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        frame.hint:SetPoint("TOPLEFT", 64, -40)
+
+        local accept = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+        accept:SetSize(140, 22)
+        accept:SetPoint("BOTTOMRIGHT", -16, 14)
+        accept:SetText("Übernehmen")
+        accept:SetScript("OnClick", function()
+            Kontor:SafeCall("Eingabe", function()
+                if frame.onAccept(frame.editBox:GetText()) then frame:Hide() end
+            end)
+        end)
+        inputWindows[id] = frame
+    end
+    frame.onAccept = onAccept
+    frame.hint:SetText(hint or "")
+    frame.editBox:SetText("")
+    frame:Show()
+    frame.editBox:SetFocus()
+    return frame
+end

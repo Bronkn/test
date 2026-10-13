@@ -10,7 +10,7 @@ local TIMEOUT = 15
 local pending -- { itemID, requests, sent }
 Kontor.lastDepth = {} -- itemID -> { t, levels = { { price, qty } } }, used later by M10
 
-local function report(itemID)
+local function report(itemID, callback)
     local levels, total = {}, 0
     for i = 1, C_AuctionHouse.GetNumCommoditySearchResults(itemID) do
         local r = C_AuctionHouse.GetCommoditySearchResultInfo(itemID, i)
@@ -25,6 +25,10 @@ local function report(itemID)
         end
     end
     Kontor.lastDepth[itemID] = { t = time(), levels = levels }
+    if callback then
+        callback(levels) -- detail window shows its own sentence
+        return
+    end
 
     local full = C_AuctionHouse.HasFullCommoditySearchResults(itemID)
     Kontor:Print("Markttiefe " .. Kontor:ItemLabel(itemID) .. ": " .. total .. " Stück auf "
@@ -65,7 +69,8 @@ local function send()
         { { sortOrder = sortOrder.Price, reverseSort = false } }, false)
 end
 
-function Kontor:QueryDepth(arg)
+-- callback(levels), if given, receives the price ladder instead of chat output.
+function Kontor:QueryDepth(arg, callback)
     local itemID = self:ParseItemID(arg)
     if not itemID then
         self:Print("Bitte ein Item angeben: /kontor tiefe, dann Umschalt-Klick auf ein Item.")
@@ -79,7 +84,7 @@ function Kontor:QueryDepth(arg)
         self:Print("Bitte warten, bis der Scan fertig ist.")
         return
     end
-    pending = { itemID = itemID, requests = 0 }
+    pending = { itemID = itemID, requests = 0, callback = callback }
     local query = pending
     C_Timer.After(TIMEOUT, function()
         if pending == query then
@@ -99,8 +104,9 @@ local function onCommodityResults(_, itemID)
         C_AuctionHouse.RequestMoreCommoditySearchResults(itemID)
         return
     end
+    local callback = pending.callback
     pending = nil
-    report(itemID)
+    report(itemID, callback)
 end
 
 Kontor:RegisterEvent("COMMODITY_SEARCH_RESULTS_UPDATED", "Markttiefe", onCommodityResults)

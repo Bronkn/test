@@ -88,6 +88,7 @@ local function processRow(row)
     end
     entry.p = minPrice
     entry.q = total
+    entry.v = Kontor:CountKeys(byVariant) > 1 and true or nil -- several variants (suffix/level)
     entry.t = Scan.startedAt
     entry.listed = true
 end
@@ -105,6 +106,7 @@ local function finish(complete, reason, ranThrough)
                 entry.listed = false
             end
         end
+        Kontor:SafeCall("Verlauf", Kontor.RecordHistory, Kontor, data, Scan.startedAt, variants)
     end
 
     local diag = {}

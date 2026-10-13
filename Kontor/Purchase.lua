@@ -53,9 +53,16 @@ Kontor:RegisterEvent("COMMODITY_PURCHASE_SUCCEEDED", "Kauf-Erkennung", function(
         total = p.unitPrice * p.quantity
     end
     table.insert(Kontor.sessionPurchases, { t = time(), itemID = p.itemID, qty = p.quantity, total = total })
+    -- Watchlist items go into the ledger automatically (Pflichtenheft 4.6).
+    local booked = false
+    if total and Kontor:FindBasketItem(p.itemID) then
+        Kontor:AddLedgerEntry(p.itemID, "buy", p.quantity, total / p.quantity, "auto")
+        booked = true
+    end
     if total then
         Kontor:Print("Kauf erkannt: " .. Kontor:ItemLabel(p.itemID) .. " × " .. p.quantity .. " für "
-            .. Kontor:FormatMoney(total) .. " (je Stück " .. Kontor:FormatMoney(total / p.quantity) .. ").")
+            .. Kontor:FormatMoney(total) .. " (je Stück " .. Kontor:FormatMoney(total / p.quantity) .. ")."
+            .. (booked and " Im Journal gebucht." or ""))
     else
         Kontor:Print("Kauf erkannt: " .. Kontor:ItemLabel(p.itemID) .. " × " .. p.quantity .. ", Preis unbekannt.")
     end

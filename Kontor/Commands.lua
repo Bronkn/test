@@ -9,10 +9,15 @@ local HELP = {
     "/kontor scaninfo - Items je Abfrage beim letzten Scan",
     "/kontor verkaufen - Verkaufsliste (nur bei offenem AH)",
     "/kontor tiefe <Item-Link> - Preistreppe im AH (nur bei offenem AH)",
-    "/kontor tooltip - Preiszeile im Tooltip an/aus",
     "/kontor autoauf - Fenster mit dem AH öffnen an/aus",
     "/kontor sichern - Daten jetzt speichern (lädt die Oberfläche neu)",
-    "/kontor entzauber export - Entzauber-Protokoll zum Kopieren",
+    "/kontor rezepte - Rezeptfenster",
+    "/kontor entzaubern - Entzauber-Fenster (Verzauberer)",
+    "/kontor kaufen - AH-Angebote unter Entzauberwert",
+    "/kontor entzauber export - Entzauber-Tabelle und Protokoll zum Kopieren",
+    "/kontor entzauber import - Starttabelle einfügen",
+    "/kontor vorlage - Startkörbe anlegen (nur wenn noch keine Körbe da sind)",
+    "/kontor einstellungen - Einstellungen",
     "/kontor salvager - Arcane Salvager aktiv/nicht aktiv",
     "/kontor fehler - Fehlerprotokoll zum Kopieren",
     "/kontor testfehler - erzeugt absichtlich einen Fehler (zum Testen)",
@@ -74,13 +79,28 @@ local commands = {
         Kontor:Print("Preiszeile im Tooltip: " .. (cfg.tooltipEnabled and "an" or "aus") .. ".")
     end,
     entzauber = function(arg)
-        if strtrim(arg or ""):lower() == "export" then
+        local sub = strtrim(arg or ""):lower()
+        if sub == "export" then
             Kontor:ShowDisenchantExport()
+        elseif sub == "import" then
+            Kontor:ShowDisenchantImport()
         else
             Kontor:Print("Entzauber-Protokoll: " .. #Kontor.db.deLog .. " Einträge. /kontor entzauber export zeigt sie.")
         end
     end,
     salvager = function() Kontor:ToggleSalvager() end,
+    rezepte = function() Kontor:ShowRecipeWindow() end,
+    entzaubern = function() Kontor:ShowDisenchantWindow() end,
+    kaufen = function() Kontor:ShowDisenchantBuys() end,
+    einstellungen = function() Kontor:ShowSettings() end,
+    vorlage = function()
+        if Kontor:ApplyStartBaskets() then
+            Kontor:Print("Startkörbe angelegt.")
+            Kontor:FireChange()
+        else
+            Kontor:Print("Es gibt schon Körbe. Die Vorlage überschreibt nie vorhandene Körbe.")
+        end
+    end,
     autoauf = function()
         local cfg = Kontor.db.config
         cfg.autoOpenWithAH = not cfg.autoOpenWithAH

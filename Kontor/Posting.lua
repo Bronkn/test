@@ -17,8 +17,10 @@ function Kontor:FindPostingCandidates()
         local itemID = info.itemID
         if info.isBound then return skip("gebunden") end
         if db.postExclusions[itemID] then return skip("nicht anbieten") end
-        -- Watchlist items are sold by their basket phase (M6/M10), not from here.
-        if self:FindBasketItem(itemID) then return skip("im Korb") end
+        -- Watchlist items only in phase "Abstoßen" (decision 13.10.2026).
+        local basket, item = self:FindBasketItem(itemID)
+        local selling = basket and self:GetItemPhase(basket, item) == "abstossen"
+        if basket and not selling then return skip("im Korb, nicht Abstoßen") end
 
         local entry = self:GetPrice(itemID)
         if not entry or not entry.p then return skip("ohne Scan-Preis") end
@@ -38,7 +40,7 @@ function Kontor:FindPostingCandidates()
         if net <= sellPrice then return skip("Händler bringt mehr") end
 
         table.insert(list, {
-            bag = bag, slot = slot, itemID = itemID,
+            bag = bag, slot = slot, itemID = itemID, fromBasket = selling or nil,
             link = info.hyperlink, icon = info.iconFileID,
             count = count, unitPrice = entry.p,
             ahNetTotal = net * count,

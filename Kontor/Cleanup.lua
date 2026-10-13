@@ -17,12 +17,13 @@ local function isQuestItem(bag, slot, classID)
     return false
 end
 
--- Returns the list of candidate stacks, highest vendor value first.
+-- Returns the list of candidate stacks, highest vendor value first, and the
+-- number of stacks held back because disenchanting brings more.
 -- Each: { bag, slot, itemID, link, icon, count, vendorTotal, ahNetTotal, priceTime }
 function Kontor:FindCleanupCandidates()
     local db = self.db
     local cfg = db.config
-    local list = {}
+    local list, heldBack = {}, 0
 
     self:ForEachBagItem(function(bag, slot, info)
         local itemID = info.itemID
@@ -49,6 +50,11 @@ function Kontor:FindCleanupCandidates()
         if not entry or not entry.p or not self:IsPriceFresh(entry) then return end
         -- 3. vendor >= AH net (plus safety margin)
         if sellPrice < entry.p * (1 - cfg.ahFee) * (1 + cfg.cleanupMargin) then return end
+        -- 8. nothing that brings more when disenchanted (Nachtrag 2, 6)
+        if self:HoldBackForDisenchant(info.hyperlink or itemID, info.isBound) then
+            heldBack = heldBack + 1
+            return
+        end
 
         local count = info.stackCount or 1
         table.insert(list, {
@@ -62,5 +68,5 @@ function Kontor:FindCleanupCandidates()
     end)
 
     table.sort(list, function(a, b) return a.vendorTotal > b.vendorTotal end)
-    return list
+    return list, heldBack
 end

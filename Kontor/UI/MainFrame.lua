@@ -78,14 +78,10 @@ end
 local mainFrame
 
 local function createMainFrame()
-    local frame = Kontor:CreateWindow("KontorMainFrame", "Kontor", 760, 480, "main")
+    local frame = Kontor:CreateWindow("KontorMainFrame", "Kontor", 980, 560, "main")
     Kontor:CreateScanWidget(frame, "TOPLEFT", frame, "TOPLEFT", 64, -30)
     Kontor:CreatePostingButton(frame, "TOPRIGHT", frame, "TOPRIGHT", -12, -30)
-
-    local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisable")
-    hint:SetPoint("CENTER", 0, -10)
-    hint:SetText("Hier entstehen die Körbe (Meilenstein M6).")
-
+    Kontor:BuildBasketView(frame) -- UI/BasketsUI.lua
     return frame
 end
 

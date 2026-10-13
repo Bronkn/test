@@ -3,8 +3,8 @@
 
 local ADDON_NAME, Kontor = ...
 
--- Version 3 = Pflichtenheft + Nachtrag 1 (v2) + Nachtrag 2 (v3).
-local DB_VERSION = 3
+-- Version 4 = Pflichtenheft + Nachtrag 1 (v2) + Nachtrag 2 (v3) + Nachtrag 3 and M6-M14 (v4).
+local DB_VERSION = 4
 
 local DEFAULTS = {
     config = {
@@ -26,6 +26,9 @@ local DEFAULTS = {
         deBuyDiscount = 0.25,
         deMaxQuality = 3, -- blue
         salvagerActive = false, -- switch set by the user (docs/Entscheidungen.md)
+        usageTooltip = true, -- usage note as last tooltip line (Nachtrag 3)
+        deTooltip = true, -- disenchant line in the tooltip (Nachtrag 2, 4.1)
+        bankCharName = nil, -- receiver for disenchant goods; defaults to enchanterName
     },
     markets = {},
     baskets = {},
@@ -39,6 +42,9 @@ local DEFAULTS = {
     deImport = {},
     deExclusions = {},
     ui = {}, -- window positions
+    chars = {}, -- per character: professions (for "fremder Beruf")
+    deStats = {}, -- disenchant group sums, see DisenchantEval.lua
+    deRelease = {}, -- epic items released for disenchanting
 }
 
 -- Copies every key of defaults that is missing in target. Existing values,

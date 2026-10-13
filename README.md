@@ -18,4 +18,4 @@ AH-Addon für World of Warcraft: Forever. Slash-Befehl `/kontor`.
 - API-Prüfung: [API-NOTIZEN.md](API-NOTIZEN.md)
 - Änderungen: [CHANGELOG.md](CHANGELOG.md)
 
-Aktueller Stand: **M2 bis M5b**, warten auf Abnahme (Testliste: [docs/Testliste-M2-M5b.md](docs/Testliste-M2-M5b.md)).
+Aktueller Stand: **M6 bis M14**, warten auf Abnahme (Testliste: [docs/Testliste-M6-M14.md](docs/Testliste-M6-M14.md)).

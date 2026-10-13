@@ -135,7 +135,7 @@ function Kontor:RefreshPostingList()
         row.selected:Hide()
         if c then
             row.icon:SetTexture(c.icon)
-            row.cells.name:SetText(c.link or ("Item " .. c.itemID))
+            row.cells.name:SetText((c.fromBasket and "|cffffcc00K|r " or "") .. (c.link or ("Item " .. c.itemID)))
             row.cells.count:SetText(c.count)
             row.cells.unit:SetText(self:FormatMoney(c.unitPrice))
             row.cells.net:SetText(self:FormatMoney(c.ahNetTotal))

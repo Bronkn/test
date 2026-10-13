@@ -2,6 +2,22 @@
 
 ## [Unveröffentlicht]
 
+### 0.5.0 – M6 bis M14 und Nachtrag 3 (wartet auf Abnahme)
+- **Körbe (M6):** Hauptfenster mit Körben links und Item-Tabelle rechts (Preis, Alter, Menge, Trend, Bestand, Lagerplätze, Einstand, Break-even, Signal). Korb anlegen, umbenennen, löschen; Phase, Budget, Notiz. Items per Umschalt-Klick, Ziehen oder ID. Detailansicht mit Kauflimit, Zielpreis (auf Festpreis begrenzt), Zielmenge, Festpreis, Lagerlimit, Phase je Item, Verwendung.
+- **Startkonfiguration:** Körbe A, B, C, D, W nach Nachtrag 1 mit den Änderungen aus Nachtrag 3; Rezeptvorlagen und Verwendungs-Notizen. `/kontor vorlage`.
+- **Verlauf (M7):** Ein Punkt je vollständigem Scan und Stunde für Watchlist-Items, Menge 0 wenn nicht gelistet, nach 14 Tagen ein Punkt pro Tag. Detailansicht: letzte 20 Punkte, Kennzahlen 7/30 Tage, Lesehilfe.
+- **Bestand und Einstand (M8):** Journal mit Kauf/Verkauf/Korrektur; Käufe von Watchlist-Items im AH-Fenster werden automatisch gebucht. Gleitender Durchschnitt, Break-even, Investiert/Budget mit Warnfarbe, Marktwert, unrealisierter Gewinn, Abgleich mit dem Charakter-Bestand.
+- **Rezepte (M9, Nachtrag 1 4.x, Nachtrag 3):** Rezeptfenster mit Kosten (AH und Einstand), Produkt netto, Spanne, Faktor, Empfehlung, Einkaufsliste (Anzahl oder Budget), Ketten, Übernahme per Rezept-Link aus dem Berufsfenster, „fremder Beruf“.
+- **Signale (M10):** Kaufen / Verkaufen / Verarbeiten lohnt in Tabelle, Tooltip und Scan-Zusammenfassung; Phase „Beobachten“ ohne Signale; Festpreis-Hinweis; Lagerlimit; Markttiefe in der Detailansicht mit Satz je Phase.
+- **Entzaubern auswerten (M11):** Gruppen nach Qualität × Klasse × Stufenband, Erwartungswert, Empfehlung mit 10 %-Vorsprung, „unsicher“ unter n = 10, Tooltip-Zeile, Aufräumen hält Entzauberware zurück. Export als Tabelle, `/kontor entzauber import`.
+- **Entzauber-Fenster (M12):** Liste plus gesicherter Knopf „Nächstes entzaubern“ (ein Item je Klick, im Kampf ohne Wirkung), „Nie entzaubern“, Salvager-Haken.
+- **Main ohne Verzauberkunst (M13):** Tooltip „an Bankchar schicken“, Briefkasten-Knopf füllt Empfänger und Anhänge.
+- **Kaufen zum Entzaubern (M14):** Liste der AH-Angebote unter Entzauberwert, „Variante prüfen“, Klick startet die AH-Suche. Neue Materialien kommen automatisch in Korb „E - Verzauberung“.
+- **Einstellungen:** `/kontor einstellungen`.
+- **Verkaufsliste:** Korb-Items in Phase „Abstoßen“ erscheinen jetzt auch (mit „K“ markiert).
+- Datenmodell Version 4 (Migration ergänzt nur).
+
+
 ### 0.4.1 – Verkaufsliste ohne Mindestwert
 - Die Grenze von 10 Silber je Stapel entfällt: Einzelne Splitter oder wenige Stück Staub fehlten in der Liste (Test 13.10.2026). Die Liste ist nach Erlös sortiert, Kleinkram steht unten.
 - Unter der Liste steht, welche Items warum fehlen (z. B. „2 ohne Scan-Preis, 1 gebunden“).

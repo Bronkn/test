@@ -70,3 +70,19 @@ Ein Knopf, der alles einstellt, widerspricht Pflichtenheft 2, 6.1 und 7 und ist 
   gebunden, keine Quest-Items, **nicht in einem Korb**. Korb-Items in Phase „Abstoßen“ kommen mit M6/M10 dazu.
 
 Nachtrag 0.4.1: Die Mindestgrenze von 10 Silber je Stapel wurde auf Wunsch des Nutzers gestrichen.
+
+## 13.10.2026 – Umsetzung M6 bis M14 und Nachtrag 3 (am Stück, Wunsch des Nutzers)
+
+- **Rezepte bearbeiten** geht über ein Textfeld mit einfachen Zeilen (`Produkt:`, `Ausbeute:`, `Beruf:`,
+  `Zutat: <ID> x<Menge> [Händler <Preis>]`). Schneller zu bauen und robuster als ein Formular mit vielen Feldern.
+- **Rezept übernehmen** (Nachtrag 1, 4.3): per Rezept-Link (Umschalt-Klick im Berufsfenster) in ein Feld im
+  Rezeptfenster, nicht als Knopf im Berufsfenster, weil dessen Aufbau in Forever nicht bekannt ist.
+- **Öl-Vorlagen** (Nachtrag 3) haben keine Produkt-ID und liegen unter ihrem Namen; sie bleiben unvollständig,
+  bis sie aus dem Berufsfenster übernommen oder von Hand ergänzt werden. Korb W bekommt die Öle erst mit ID.
+- **Leere Phiole** als Händlerzutat von Sulfuric Acid mit Classic-ID 3371 vorbelegt (im Berufsfenster gesehen,
+  ID in Forever unbestätigt); ohne Festpreis bleibt das Rezept unvollständig.
+- **Liniendiagramm** (Pflichtenheft 4.5, Stufe 2) und **Minikarten-Knopf** (optional) sind nicht gebaut.
+- **Entzauber-Auswertung:** eigene Daten ab n ≥ 10, sonst importierte Starttabelle, sonst eigene Daten mit
+  „unsicher“. Mit Salvager-Haken zählen die Salvager-Gruppen, ersatzweise die normalen.
+- **Verkaufsliste:** Korb-Items erscheinen nur in Phase „Abstoßen“.
+- Phasen, Budget usw. werden über Knöpfe und kleine Eingabedialoge gesetzt (keine Aufklapplisten).

@@ -186,11 +186,13 @@ local function tryResolve(a, final)
 
     local d = describe(item)
     local cfg = Kontor.db.config
-    table.insert(Kontor.db.deLog, {
+    local entry = {
         t = time(), itemID = d.itemID, quality = d.quality, ilvl = d.ilvl, class = d.class,
         reqLevel = d.reqLevel, skill = a.skill, salvager = cfg.salvagerActive and true or false,
         auras = a.auras, results = a.results,
-    })
+    }
+    table.insert(Kontor.db.deLog, entry)
+    Kontor:OnDisenchantLogged(entry)
     Kontor:Print("Entzaubert: " .. (d.link or Kontor:ItemLabel(d.itemID)) .. " → " .. table.concat(a.parts, ", ")
         .. (cfg.salvagerActive and " (Salvager aktiv)" or ""))
     return true
@@ -278,7 +280,21 @@ local function buildExport()
 end
 
 function Kontor:ShowDisenchantExport()
-    self:ShowTextWindow("deExport", "Kontor - Entzauber-Protokoll", buildExport)
+    self:ShowTextWindow("deExport", "Kontor - Entzauber-Tabelle", function()
+        return Kontor:BuildDisenchantTable() .. "\n\n" .. buildExport()
+    end)
+end
+
+function Kontor:ShowDisenchantImport()
+    self:ShowInputWindow("deImport", "Kontor - Entzauber-Starttabelle",
+        "Tabelle einfügen (Format wie im Export), dann \"Übernehmen\".", function(text)
+            local count, err = Kontor:ImportDisenchantTable(text)
+            if count then
+                Kontor:Print("Starttabelle übernommen: " .. count .. " Gruppen.")
+                return true
+            end
+            Kontor:Print("Import fehlgeschlagen: " .. err)
+        end)
 end
 
 function Kontor:ToggleSalvager()

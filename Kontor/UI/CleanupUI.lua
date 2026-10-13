@@ -173,7 +173,8 @@ function Kontor:ShowCleanupPreview()
     if not self.merchantOpen then return end
     if not preview then preview = createPreview() end
 
-    candidates = self:FindCleanupCandidates()
+    local heldBack
+    candidates, heldBack = self:FindCleanupCandidates()
     for i, row in ipairs(preview.rows) do
         local c = candidates[i]
         row.data = c
@@ -198,6 +199,10 @@ function Kontor:ShowCleanupPreview()
             .. "(höchstens " .. MAX_ROWS .. ", damit alles über den Rückkauf zurückholbar bleibt).")
     else
         preview.more:SetText("")
+    end
+    if heldBack > 0 then
+        preview.more:SetText(preview.more:GetText() .. (preview.more:GetText() ~= "" and "\n" or "")
+            .. heldBack .. " Items zurückgehalten: besser entzaubern.")
     end
 
     self:UpdateCleanupSummary()

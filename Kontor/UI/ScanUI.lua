@@ -45,6 +45,8 @@ function Kontor:CreateScanWidget(parent, point, relativeTo, relativePoint, x, y)
     local label = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     label:SetPoint("LEFT", button, "RIGHT", 8, 0)
     label:SetJustifyH("LEFT")
+    label:SetWidth(300)
+    label:SetWordWrap(false)
 
     table.insert(widgets, { button = button, label = label })
     self:UpdateScanWidgets()
@@ -102,13 +104,20 @@ function Kontor:OnScanFinished(complete, itemCount, duration, reason, ranThrough
 
     if ranThrough then
         self:Print("Scan fertig: " .. itemCount .. " Items in " .. durationText .. ". Details: /kontor scaninfo")
+        -- Signals and disenchant offers (Pflichtenheft 4.1, 4.8; Nachtrag 1, 4.1; Nachtrag 2, 8)
+        local counts = self:CountSignals()
+        local buys = #self:FindDisenchantBuys()
+        local signalText = "Signale: " .. counts.buy .. "× Kaufen, " .. counts.sell .. "× Verkaufen, "
+            .. counts.craft .. "× Verarbeiten lohnt.\n" .. buys .. " Items unter Entzauberwert."
+        self:Print((signalText:gsub("\n", " ")))
+        self:FireChange()
         local note = ""
         if not complete then
             note = "\n\n|cffff8800Achtung: " .. (reason or "Scan unvollständig")
                 .. ". Details: /kontor scaninfo|r"
         end
         StaticPopup_Show("KONTOR_SCAN_DONE",
-            "Kontor: Scan fertig.\n\n" .. itemCount .. " Items in " .. durationText .. "." .. note .. "\n\n"
+            "Kontor: Scan fertig.\n\n" .. itemCount .. " Items in " .. durationText .. ".\n" .. signalText .. note .. "\n\n"
             .. "WoW speichert die Daten erst beim Ausloggen oder Neuladen.\n"
             .. "\"Jetzt sichern\" lädt die Oberfläche neu und speichert sofort.")
     else
