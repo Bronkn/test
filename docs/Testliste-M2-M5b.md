@@ -57,14 +57,14 @@ Falls ein Scan ohne dein Zutun mit „andere Suche im Auktionshaus gestartet“ 
 
 Vorbereitung: ein paar billige grüne oder weiße Items in der Tasche, die nach dem Scan gelistet waren.
 
-- [ ] **D1** Händler ansprechen: Über dem Händlerfenster steht „Kontor: Aufräumen (n Items, Betrag)“
+- [x] **D1** Händler ansprechen: Über dem Händlerfenster steht „Kontor: Aufräumen (n Items, Betrag)“
   oder ausgegraut „nichts zu tun“.
-- [ ] **D2** Klick öffnet die Vorschau. Zwei Zeilen von Hand prüfen: Händler-Spalte ≥ AH netto (AH-Preis × 0,95 × Menge)?
-- [ ] **D3** In der Liste taucht **kein** gebundenes Item auf, **kein** graues und keins ohne Scan-Preis.
-- [ ] **D4** Bei einer Zeile das Häkchen entfernen, „Verkaufen“. Dieses Item bleibt in der Tasche, die anderen sind weg.
+- [x] **D2** Klick öffnet die Vorschau. Zwei Zeilen von Hand prüfen: Händler-Spalte ≥ AH netto (AH-Preis × 0,95 × Menge)?
+- [x] **D3** In der Liste taucht **kein** gebundenes Item auf, **kein** graues und keins ohne Scan-Preis.
+- [x] **D4** Bei einer Zeile das Häkchen entfernen, „Verkaufen“. Dieses Item bleibt in der Tasche, die anderen sind weg.
   Chat: „Aufgeräumt: n Stapel verkauft, Erlös …“
-- [ ] **D5** Die verkauften Items stehen im Rückkauf-Reiter des Händlers.
-- [ ] **D6** Rechtsklick auf eine Zeile → „Nie verkaufen“ bestätigen. Das Item verschwindet aus der Liste und
+- [x] **D5** Die verkauften Items stehen im Rückkauf-Reiter des Händlers.
+- [x] **D6** Rechtsklick auf eine Zeile → „Nie verkaufen“ bestätigen. Das Item verschwindet aus der Liste und
   taucht auch beim nächsten Händlerbesuch nicht mehr auf.
 
 ## E – Entzaubern (Bankcharakter, 5 Min.)
