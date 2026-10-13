@@ -173,6 +173,12 @@ Fehlt eines davon, lädt das Addon trotzdem; der Fehler steht dann in `/kontor f
 | `C_Item.GetDetailedItemLevelInfo` | genaue Gegenstandsstufe |
 | `issecretvalue` | erkennt vom Spiel verborgene Werte (optional) |
 
+## Erkenntnisse aus dem ersten Scan (13.10.2026, Beta)
+
+- Übersichtsabfrage ohne Suchtext und ohne Filter liefert das ganze AH: **2146 Items in 0:09** (Pflichtenheft, offene Punkte 3 und 4).
+- Tiefstpreise stimmen mit dem AH-Fenster überein, Markttiefe und Kauf-Erkennung funktionieren (Testliste Block B).
+- Blizzards AH-Fenster hat den Scan nicht durch eigene Suchen abgebrochen.
+
 ## Erkenntnisse zu Rezepten
 
 - Händlerzutat von Sulfuric Acid (Schwefelsäure) ist **Leere Phiole** (Classic-ID 3371, in Forever noch zu bestätigen).

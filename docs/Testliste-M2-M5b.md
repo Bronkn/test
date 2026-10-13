@@ -12,28 +12,28 @@ Zum Melden reicht: Nummer + „ok“ oder was anders war. Bei Fehlermeldungen bi
 
 ## A – Irgendwo nach dem Einloggen (2 Min.)
 
-- [ ] **A1** Einloggen ohne Fehlermeldung. Im Chat steht einmalig „Verzauberer erkannt: <Name>“.
-- [ ] **A2** `/kontor fehler` zeigt „Keine Fehler protokolliert“. Steht dort etwas, bitte kopieren und schicken.
-- [ ] **A3** `/kontor` öffnet das Fenster; oben links steht ein **ausgegrauter** Knopf „Scannen“ mit dem
+- [x] **A1** Einloggen ohne Fehlermeldung. Im Chat steht einmalig „Verzauberer erkannt: <Name>“.
+- [x] **A2** `/kontor fehler` zeigt „Keine Fehler protokolliert“. Steht dort etwas, bitte kopieren und schicken.
+- [x] **A3** `/kontor` öffnet das Fenster; oben links steht ein **ausgegrauter** Knopf „Scannen“ mit dem
   Hinweis „Scannen geht nur bei geöffnetem Auktionshaus“.
 
 ## B – Am Auktionshaus (10–15 Min.)
 
-- [ ] **B1** AH öffnen. Über dem AH-Fenster oben links steht „Kontor [Scannen]“.
-- [ ] **B2** „Scannen“ klicken. Daneben zählen Items und Zeit hoch, das Spiel bleibt bedienbar.
+- [x] **B1** AH öffnen. Über dem AH-Fenster oben links steht „Kontor [Scannen]“.
+- [x] **B2** „Scannen“ klicken. Daneben zählen Items und Zeit hoch, das Spiel bleibt bedienbar.
   **Währenddessen im AH nichts suchen.**
-- [ ] **B3** Am Ende erscheint ein Fenster „Scan fertig“ mit Anzahl und Dauer. **Bitte beides notieren.**
+- [x] **B3** Am Ende erscheint ein Fenster „Scan fertig“ mit Anzahl und Dauer. **Bitte beides notieren.**
   Noch nicht auf „Jetzt sichern“ klicken, erst „Später“.
-- [ ] **B4** Drei Items im AH-Fenster suchen, den niedrigsten Stückpreis ablesen und mit
+- [x] **B4** Drei Items im AH-Fenster suchen, den niedrigsten Stückpreis ablesen und mit
   `/kontor preis ` + Umschalt-Klick aufs Item vergleichen. Preise gleich?
-- [ ] **B5** Markttiefe: `/kontor tiefe ` + Umschalt-Klick auf eine Handelsware (z. B. Leinenstoff, Pyrit).
+- [x] **B5** Markttiefe: `/kontor tiefe ` + Umschalt-Klick auf eine Handelsware (z. B. Leinenstoff, Pyrit).
   Der Chat listet Preisstufen mit Stückzahlen. Stimmt das grob mit der Liste im AH-Fenster überein?
-- [ ] **B6** Dasselbe mit einem Ausrüstungsteil: Meldung „keine Handelsware“, kein Fehler.
-- [ ] **B7** Kauf-Erkennung: Eine **billige** Handelsware ganz normal im AH-Fenster kaufen (z. B. 1–5 Stück).
+- [x] **B6** Dasselbe mit einem Ausrüstungsteil: Meldung „keine Handelsware“, kein Fehler.
+- [x] **B7** Kauf-Erkennung: Eine **billige** Handelsware ganz normal im AH-Fenster kaufen (z. B. 1–5 Stück).
   Der Chat meldet „Kauf erkannt: [Item] × Menge für X (je Stück Y)“. Stimmt der Betrag mit dem gezahlten überein?
-- [ ] **B8** Neuen Scan starten und das AH **sofort schließen**. Chat: „Scan abgebrochen (Auktionshaus geschlossen)“,
+- [x] **B8** Neuen Scan starten und das AH **sofort schließen**. Chat: „Scan abgebrochen (Auktionshaus geschlossen)“,
   keine Fehlermeldung.
-- [ ] **B9** AH wieder öffnen, Scan bis zum Ende laufen lassen, diesmal **„Jetzt sichern“** klicken.
+- [x] **B9** AH wieder öffnen, Scan bis zum Ende laufen lassen, diesmal **„Jetzt sichern“** klicken.
   Nach dem Neuladen liefert `/kontor preis` für die Items aus B4 weiterhin Preise.
 
 Falls ein Scan ohne dein Zutun mit „andere Suche im Auktionshaus gestartet“ abbricht: bitte melden.
