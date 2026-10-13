@@ -2,6 +2,11 @@
 
 ## [Unveröffentlicht]
 
+### 0.3.4 – Entzaubern zuverlässiger erkennen
+- **Fehler behoben:** In Forever wurde das entzauberte Item nicht erkannt („nicht eindeutig“), weil die Erkennung nur auf die Sperre des Taschenfachs setzte. Jetzt in dieser Reihenfolge: Zielname, den das Spiel beim Wirken mitschickt; zuletzt gesperrtes Fach; einziges gesperrtes Item.
+- Bleibt es unklar, nennt die Chatzeile, was gesehen wurde (Zielname, Anzahl passender und gesperrter Items).
+
+
 ### 0.3.3 – Scan wieder mit einer Abfrage
 - Test 13.10.2026: Die Abfrage ohne Filter allein lieferte 3133 von 3134 Items. Der Scan nach Klassen und das Aufteilen bei 300 entfallen wieder, der Scan ist dadurch etwa dreimal so schnell.
 

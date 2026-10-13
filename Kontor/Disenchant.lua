@@ -11,6 +11,7 @@ local ERROR_WINDOW = 2 -- seconds an error message counts for a failed cast
 
 local attempt -- { link, itemID, quality, ilvl, class, reqLevel, unclear, succeededAt, auras, skill }
 local lastError -- { msg, at }
+local sentTarget -- item name from UNIT_SPELLCAST_SENT
 
 local function classLabel(classID)
     if classID == 4 then return "armor" end
@@ -18,21 +19,57 @@ local function classLabel(classID)
     return "other"
 end
 
--- The item being disenchanted is locked while the spell runs.
-local function findTarget()
-    local found, count = nil, 0
-    Kontor:ForEachBagItem(function(_, _, info)
+local LOCK_WINDOW = 5 -- seconds a slot lock counts as "just clicked"
+
+local lastLock -- { bag, slot, at }: the bag slot locked most recently
+
+-- Which bag item is being disenchanted? Tried in this order (the first
+-- version relied on the lock alone, which failed in Forever on 13.10.2026):
+--  1. the target name the game sends with the cast, matched in the bags
+--  2. the slot locked just before the cast (ITEM_LOCK_CHANGED)
+--  3. the only locked item in the bags
+-- Returns the slot info, or nil plus a short description of what was seen.
+local function findTarget(targetName)
+    local byName, locked = {}, {}
+    Kontor:ForEachBagItem(function(bag, slot, info)
+        if targetName and info.itemName == targetName then
+            table.insert(byName, info)
+        end
         if info.isLocked then
-            found = info
-            count = count + 1
+            table.insert(locked, info)
         end
     end)
-    if count ~= 1 then return nil end
-    return found
+
+    -- 1. Several stacks with the same name are fine if they are the same item.
+    if #byName > 0 then
+        local first = byName[1]
+        local same = true
+        for _, info in ipairs(byName) do
+            if info.hyperlink ~= first.hyperlink then same = false end
+        end
+        if same then return first end
+        for _, info in ipairs(byName) do
+            if info.isLocked then return info end
+        end
+    end
+
+    -- 2.
+    if lastLock and GetTime() - lastLock.at <= LOCK_WINDOW then
+        local info = C_Container.GetContainerItemInfo(lastLock.bag, lastLock.slot)
+        if info and info.itemID and (not targetName or info.itemName == targetName) then
+            return info
+        end
+    end
+
+    -- 3.
+    if #locked == 1 then return locked[1] end
+
+    return nil, string.format("Ziel %s, %d passende Items, %d gesperrt",
+        targetName and ('"' .. targetName .. '"') or "unbekannt", #byName, #locked)
 end
 
-local function describe(info)
-    if not info then return { unclear = true } end
+local function describe(info, why)
+    if not info then return { unclear = true, why = why } end
     local link = info.hyperlink
     local _, _, quality, ilvl, reqLevel, _, _, _, _, _, _, classID = C_Item.GetItemInfo(link or info.itemID)
     if C_Item.GetDetailedItemLevelInfo and link then
@@ -82,8 +119,8 @@ end
 -- Cast events --------------------------------------------------------------
 
 local castFrame = CreateFrame("Frame")
-local castEvents = { "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_SUCCEEDED", "UNIT_SPELLCAST_FAILED",
-    "UNIT_SPELLCAST_INTERRUPTED" }
+local castEvents = { "UNIT_SPELLCAST_SENT", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_SUCCEEDED",
+    "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_INTERRUPTED" }
 for _, event in ipairs(castEvents) do
     if not pcall(castFrame.RegisterUnitEvent, castFrame, event, "player") then
         Kontor:LogError("Entzaubern", "Event " .. event .. " unbekannt")
@@ -91,7 +128,7 @@ for _, event in ipairs(castEvents) do
 end
 
 local function logFailure(reason)
-    local a = attempt or describe(findTarget())
+    local a = attempt or describe(findTarget(sentTarget))
     table.insert(Kontor.db.deFailures, {
         t = time(), itemID = a.itemID, quality = a.quality, ilvl = a.ilvl, class = a.class,
         skill = enchantingSkill(), msg = reason,
@@ -99,14 +136,29 @@ local function logFailure(reason)
     Kontor:Print("Entzaubern fehlgeschlagen" .. (a.link and (" (" .. a.link .. ")") or "") .. ": " .. reason)
 end
 
-castFrame:SetScript("OnEvent", function(_, event, unit, _, spellID)
-    Kontor:SafeCall("Entzaubern", function()
+castFrame:SetScript("OnEvent", function(_, event, unit, ...)
+    Kontor:SafeCall("Entzaubern", function(...)
+        -- UNIT_SPELLCAST_SENT: unit, target, castGUID, spellID; the others: unit, castGUID, spellID
+        local target, spellID
+        if event == "UNIT_SPELLCAST_SENT" then
+            target, _, spellID = ...
+        else
+            _, spellID = ...
+        end
         if not isDisenchant(unit, spellID) then return end
 
-        if event == "UNIT_SPELLCAST_START" then
-            attempt = describe(findTarget())
+        if event == "UNIT_SPELLCAST_SENT" then
+            sentTarget = (target and not Kontor:IsSecret(target) and target ~= "") and target or nil
+            -- The item still exists here; describe it before the cast destroys it.
+            attempt = describe(findTarget(sentTarget))
+        elseif event == "UNIT_SPELLCAST_START" then
+            if not attempt or attempt.unclear then
+                attempt = describe(findTarget(sentTarget))
+            end
         elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
-            attempt = attempt or describe(findTarget())
+            if not attempt or attempt.unclear then
+                attempt = describe(findTarget(sentTarget))
+            end
             attempt.succeededAt = GetTime()
             attempt.auras = playerAuras()
             attempt.skill = enchantingSkill()
@@ -117,8 +169,18 @@ castFrame:SetScript("OnEvent", function(_, event, unit, _, spellID)
                 logFailure(lastError.msg)
             end
             attempt = nil
+            sentTarget = nil
         end
-    end)
+    end, ...)
+end)
+
+Kontor:RegisterEvent("ITEM_LOCK_CHANGED", "Entzaubern", function(_, bag, slot)
+    if bag and slot and not Kontor:IsSecret(bag) then
+        local info = C_Container.GetContainerItemInfo(bag, slot)
+        if info and info.isLocked then
+            lastLock = { bag = bag, slot = slot, at = GetTime() }
+        end
+    end
 end)
 
 Kontor:RegisterEvent("UI_ERROR_MESSAGE", "Entzaubern", function(_, _, message)
@@ -153,10 +215,10 @@ end
 local function onLoot()
     local a = attempt
     if not a or not a.succeededAt then return end -- not ours (mob, chest, ...)
-    attempt = nil
+    attempt, sentTarget = nil, nil
     if GetTime() - a.succeededAt > LOOT_WINDOW or not lootIsFromItem() then return end
     if a.unclear then
-        Kontor:Print("Entzaubern nicht protokolliert: Item nicht eindeutig erkannt.")
+        Kontor:Print("Entzaubern nicht protokolliert: Item nicht eindeutig erkannt (" .. (a.why or "?") .. ").")
         return
     end
 
