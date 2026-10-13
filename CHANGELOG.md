@@ -2,6 +2,12 @@
 
 ## [Unveröffentlicht]
 
+### 0.4.0 – Verkaufsliste
+- **Neu:** Knopf „Verkaufsliste“ über dem AH-Fenster und im Kontor-Fenster, auch `/kontor verkaufen`. Listet Taschen-Items, die im AH netto mehr bringen als beim Händler (mindestens 10 Silber je Stapel, frischer Scan-Preis, nicht gebunden, nicht in einem Korb).
+- Linksklick legt den Stapel in Blizzards Verkaufsfenster; Blizzard setzt den aktuellen Tiefstpreis. Eingestellt wird über „Auktion erstellen“ im AH-Fenster, nicht vom Addon.
+- Rechtsklick: „nicht anbieten“. Hinweis auf die Einlage im Fenster.
+
+
 ### 0.3.5 – Entzaubern über Taschenvergleich erkennen
 - Forever schickt beim Entzaubern keinen Zielnamen und sperrt kein Fach (Test 13.10.2026: „Ziel unbekannt, 0 gesperrt“). Das Addon merkt sich jetzt beim Wirken den Tascheninhalt und erkennt nach der Beute, welches Item verschwunden ist. Wird das Item erst kurz nach der Beute entfernt, wartet es bis zu 3 s.
 - Fehlschläge werden ohne Item gespeichert (das Item ist bei einem Fehlschlag nicht sicher bekannt).

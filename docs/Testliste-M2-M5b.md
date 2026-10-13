@@ -77,6 +77,18 @@ Vorbereitung: ein paar billige grüne oder weiße Items in der Tasche, die nach 
 - [ ] **E5** Ein Entzaubern mittendrin abbrechen (bewegen): kein Eintrag, keine Fehlermeldung.
 - [ ] **E6** `/reload`, dann `/kontor status`: Die Zahl der Entzauber-Einträge ist noch da.
 
+## G – Verkaufsliste (neu in 0.4.0, am AH, 5 Min.)
+
+Vorbereitung: frischer Scan, ein paar Items in der Tasche, die im AH gut Geld bringen (z. B. Kräuter, Erz).
+
+- [ ] **G1** Über dem AH-Fenster oben rechts steht der Knopf „Verkaufsliste“. Klick öffnet die Liste.
+- [ ] **G2** Die Liste zeigt nur Items, die im AH netto mehr bringen als beim Händler (Spalten vergleichen).
+- [ ] **G3** Linksklick auf eine Zeile: Das AH wechselt zum Verkaufen, das Item liegt im Verkaufsfenster,
+  ein Preis ist eingetragen. **Selbst** auf „Auktion erstellen“ klicken: Die Auktion wird erstellt,
+  **keine** Fehlermeldung (auch nicht „Aktion blockiert“). Die Zeile verschwindet aus der Liste.
+- [ ] **G4** Rechtsklick auf eine Zeile → „Nicht anbieten“: Die Zeile verschwindet und kommt nicht wieder.
+- [ ] **G5** AH schließen: Die Liste geht mit zu.
+
 ## F – Andere Fraktion (1 Min.)
 
 - [ ] **F1** Auf einem Allianz-Charakter `/kontor status`: Markt endet auf „-Alliance“, Preise: 0.

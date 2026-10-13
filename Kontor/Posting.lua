@@ -1,0 +1,66 @@
+-- Kontor: which bag items are worth more in the AH than at the vendor
+-- (counterpart of Cleanup.lua, wish of the user 13.10.2026). The addon only
+-- lists them; a click puts one into Blizzard's sell frame and the user
+-- posts it there. Nothing is posted by the addon (Pflichtenheft 2, 6.1).
+
+local _, Kontor = ...
+
+-- Returns candidate stacks, highest net AH value first.
+-- Each: { bag, slot, itemID, link, icon, count, unitPrice, ahNetTotal, vendorTotal, priceTime }
+function Kontor:FindPostingCandidates()
+    local db = self.db
+    local cfg = db.config
+    local list = {}
+
+    self:ForEachBagItem(function(bag, slot, info)
+        local itemID = info.itemID
+        if info.isBound then return end
+        if db.postExclusions[itemID] then return end
+        -- Watchlist items are sold by their basket phase (M6/M10), not from here.
+        if self:FindBasketItem(itemID) then return end
+
+        local entry = self:GetPrice(itemID)
+        if not entry or not entry.p or entry.listed == false or not self:IsPriceFresh(entry) then return end
+
+        local sellPrice, classID = select(11, C_Item.GetItemInfo(itemID))
+        if sellPrice == nil then
+            if C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
+            return
+        end
+        if classID == ((Enum.ItemClass and Enum.ItemClass.Questitem) or 12) then return end
+
+        local count = info.stackCount or 1
+        local net = self:NetPrice(entry.p)
+        if net <= sellPrice then return end -- vendor is as good: that is Aufräumen's job
+        if net * count < cfg.postMinValue then return end
+
+        table.insert(list, {
+            bag = bag, slot = slot, itemID = itemID,
+            link = info.hyperlink, icon = info.iconFileID,
+            count = count, unitPrice = entry.p,
+            ahNetTotal = net * count,
+            vendorTotal = sellPrice * count,
+            priceTime = entry.t,
+        })
+    end)
+
+    table.sort(list, function(a, b) return a.ahNetTotal > b.ahNetTotal end)
+    return list
+end
+
+-- Puts the stack into Blizzard's sell frame. Blizzard fills in the current
+-- lowest price itself; the user checks it and clicks "Auktion erstellen".
+function Kontor:PrepareListing(candidate)
+    if not self.ahOpen or not AuctionHouseFrame or not AuctionHouseFrame.SetPostItem then
+        self:Print("Das Auktionshaus ist nicht geöffnet.")
+        return false
+    end
+    local info = C_Container.GetContainerItemInfo(candidate.bag, candidate.slot)
+    if not info or info.itemID ~= candidate.itemID then
+        self:Print("Das Item liegt nicht mehr an dieser Stelle. Die Liste wird aktualisiert.")
+        return false
+    end
+    local location = ItemLocation:CreateFromBagAndSlot(candidate.bag, candidate.slot)
+    AuctionHouseFrame:SetPostItem(location)
+    return true
+end

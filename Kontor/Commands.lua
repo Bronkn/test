@@ -7,6 +7,7 @@ local HELP = {
     "/kontor status - Version, Client, Markt und Datenstand",
     "/kontor preis <Item-Link> - letzter Scan-Preis eines Items",
     "/kontor scaninfo - Items je Abfrage beim letzten Scan",
+    "/kontor verkaufen - Verkaufsliste (nur bei offenem AH)",
     "/kontor tiefe <Item-Link> - Preistreppe im AH (nur bei offenem AH)",
     "/kontor tooltip - Preiszeile im Tooltip an/aus",
     "/kontor autoauf - Fenster mit dem AH öffnen an/aus",
@@ -59,6 +60,13 @@ local commands = {
     fehler = function() Kontor:ShowErrorFrame() end,
     preis = showPrice,
     scaninfo = function() Kontor:PrintScanInfo() end,
+    verkaufen = function()
+        if not Kontor.ahOpen then
+            Kontor:Print("Die Verkaufsliste geht nur bei geöffnetem Auktionshaus.")
+            return
+        end
+        Kontor:TogglePostingList()
+    end,
     tiefe = function(arg) Kontor:QueryDepth(arg) end,
     tooltip = function()
         local cfg = Kontor.db.config

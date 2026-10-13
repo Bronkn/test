@@ -55,3 +55,16 @@ eine Abfrage reduziert werden (schneller).
 
 Nachtrag 13.10.2026: Die Zahlen (ohne Filter 3133 von 3134 Items) zeigen, dass eine Abfrage reicht.
 Ab 0.3.3 fragt der Scan wieder nur einmal ohne Filter ab.
+
+## 13.10.2026 – Verkaufsliste (Wunsch: „AH-Erstellung wie Aufräumen“)
+
+Ein Knopf, der alles einstellt, widerspricht Pflichtenheft 2, 6.1 und 7 und ist technisch nicht möglich
+(jede Auktion braucht einen eigenen Klick). Der Nutzer hat Variante 1 gewählt:
+
+- Kontor zeigt eine **Verkaufsliste**; ein Klick legt das Item in Blizzards Verkaufsfenster.
+  **Eingestellt wird vom Nutzer** mit Blizzards Knopf. Das Addon stellt nichts selbst ein.
+- Kein Unterbieten: Den Preis setzt Blizzard (aktueller Tiefstpreis). Pflichtenheft 7 schließt eine
+  Undercut-Automatik aus.
+- Inhalt (vom Nutzer offen gelassen, so festgelegt): Taschen-Items, deren AH-Preis nach Gebühr über dem
+  Händlerpreis liegt, mindestens 10 Silber je Stapel (`postMinValue`), frischer Preis, gelistet, nicht
+  gebunden, keine Quest-Items, **nicht in einem Korb**. Korb-Items in Phase „Abstoßen“ kommen mit M6/M10 dazu.

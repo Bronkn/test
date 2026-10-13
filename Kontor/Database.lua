@@ -17,6 +17,7 @@ local DEFAULTS = {
         depthUnits = 20,
         tooltipEnabled = true,
         autoOpenWithAH = true, -- Kontor window opens and closes with the AH
+        postMinValue = 1000, -- Verkaufsliste: stacks worth less than 10 silver net are left out
         -- Nachtrag 1
         fixedPriceFactor = 0.95,
         craftThreshold = 1.5,
@@ -32,6 +33,7 @@ local DEFAULTS = {
     recipes = {},
     ledger = {},
     exclusions = {},
+    postExclusions = {}, -- Verkaufsliste: "nicht anbieten"
     errorLog = {},
     deLog = {},
     deFailures = {},

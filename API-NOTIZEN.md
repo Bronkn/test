@@ -172,6 +172,7 @@ Fehlt eines davon, lädt das Addon trotzdem; der Fehler steht dann in `/kontor f
 | `GetLootSourceInfo` | Beute stammt vom Item, nicht von einem Gegner |
 | `C_Item.GetDetailedItemLevelInfo` | genaue Gegenstandsstufe |
 | `issecretvalue` | erkennt vom Spiel verborgene Werte (optional) |
+| `AuctionHouseFrame:SetPostItem`, `ItemLocation:CreateFromBagAndSlot` | Verkaufsliste (ab 0.4.0): Item ins Verkaufsfenster legen |
 
 ## Erkenntnisse aus dem ersten Scan (13.10.2026, Beta)
 
