@@ -84,7 +84,6 @@ local mainFrame
 local function createMainFrame()
     local frame = Kontor:CreateWindow("KontorMainFrame", "Kontor", 800, 480, "main") -- size set by the basket view
     Kontor:CreateScanWidget(frame, "TOPLEFT", frame, "TOPLEFT", 64, -30)
-    Kontor:CreatePostingButton(frame, "TOPRIGHT", frame, "TOPRIGHT", -12, -30)
     Kontor:BuildBasketView(frame) -- UI/BasketsUI.lua
     return frame
 end

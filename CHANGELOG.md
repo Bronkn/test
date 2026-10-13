@@ -2,6 +2,13 @@
 
 ## [Unveröffentlicht]
 
+### 0.5.3 – Kontor-Fenster nach Designvorlage (13.10.2026)
+- Ohne Signal-Spalte (Fenster rund 690 breit): Signale als Symbol vor dem Item-Namen (grün Kaufen, gelb Verkaufen, Alchemie-Symbol Verarbeiten lohnt, rot über Festpreis), Text im Zeilen-Tooltip.
+- Titelzeile ohne „(Werkstatt)“ und ohne Knöpfe Notiz/Budget/Phase; diese stehen jetzt in „Bearbeiten“ (ersetzt „Name“). Die Phase steht vorn in der Infozeile.
+- Oben kein „Entzaubern“-Knopf mehr (dafür Minimap-Knopf); „Kaufen zum Entzaubern“ und „Verkaufsliste“ direkt neben dem Scan-Status.
+- Eingabefeld „Item hinzufügen“ kürzer.
+
+
 ### 0.5.2 – Kompaktere Fenster (Designwünsche 13.10.2026)
 - Korb-Tabelle ohne Bestand, Plätze, Einstand, Break-even (stehen in der Detailansicht). Signal-Spalte zeigt nur echte Signale.
 - Kontor-Fenster schmaler (800 statt 980) und so hoch wie nötig: 4 bis 16 Item-Zeilen je nach Korb, mehr per Mausrad mit Hinweis „Zeilen x-y von z“. Korbliste ab 12 Körben per Mausrad.

@@ -14,32 +14,32 @@ Nach Orten sortiert. Zum Melden reicht Nummer + „ok“ oder was anders war. Be
   (und ggf. E - Verzauberung, siehe F). Klick auf einen Korb zeigt rechts seine Items.
 - [ ] **A3** Korb C: Globe of Water steht oben, Rosecap ist drin. Korb D: Purple Lotus und Firebloom sind drin.
 - [ ] **A4** `/kontor vorlage`: Meldung „Es gibt schon Körbe …“, nichts ändert sich.
-- [ ] **A5** „Neu“ → Korb „Test“ anlegen. „Name“ → umbenennen. „Löschen“ → Rückfrage → weg.
+- [ ] **A5** „Neu“ → Korb „Test“ anlegen. „Bearbeiten“ → Name ändern → Speichern. „Löschen“ → Rückfrage → weg.
 - [ ] **A6** Korb B wählen. Unten „Item hinzufügen“: einmal per Umschalt-Klick auf ein Item, einmal ein Item
   aus der Tasche aufs Feld ziehen, einmal eine Item-ID tippen (z. B. 2589) + Enter. Alle drei erscheinen.
   Rechtsklick auf eine Zeile → entfernen.
 - [ ] **A7** Ein Item, das schon in Korb A ist (z. B. Pyrit), in Korb B hinzufügen: Meldung „steht schon im Korb …“.
-- [ ] **A8** Phase-Knopf oben rechts: Klick wechselt Beobachten → Sammeln → Halten → Abstoßen.
-  „Budget“: 50g eintragen; „Notiz“: Text eintragen. Beides steht danach im Kopf.
+- [ ] **A8** „Bearbeiten“: Phase-Knopf wechselt Beobachten → Sammeln → Halten → Abstoßen; Budget 50g und eine
+  Notiz eintragen → Speichern. Phase und Budget stehen in der Infozeile, die Notiz darunter.
 - [ ] **A9** Klick auf eine Item-Zeile öffnet die Detailansicht. Kauflimit „1g 20s“, Zielpreis „6g“ bei einem Item mit
   Festpreis 5g (z. B. Pyrit) eintragen, Enter: Meldung „auf 5g begrenzt“. `/reload`: Werte sind noch da.
 - [ ] **A10** Detailansicht: Phase-Knopf auf „Sammeln“ für ein Item in einem Korb, der auf „Beobachten“ steht.
-  In der Korb-Tabelle steht bei diesem Item „Sammeln (Item)“.
+  In der Detailansicht steht „Phase: Sammeln“, der Korb bleibt auf „Beobachten“.
 
 ## B – Am Auktionshaus (10 Min.)
 
 - [ ] **B1** Scan. Die Zusammenfassung nennt „Signale: …× Kaufen, …× Verkaufen, …× Verarbeiten lohnt“ und
   „… Items unter Entzauberwert“.
 - [ ] **B2** Korb-Tabelle zeigt Preis, Alter und Menge aus dem Scan.
-- [ ] **B3** **Kaufsignal:** Item in Phase Sammeln (A10), Kauflimit über den aktuellen Preis setzen → Spalte Signal
-  „Kaufen“ (grün), auch im Tooltip.
+- [ ] **B3** **Kaufsignal:** Item in Phase Sammeln (A10), Kauflimit über den aktuellen Preis setzen → grüner Punkt vor dem Item-Namen,
+  beim Darüberfahren „Signal: Kaufen“, auch im Item-Tooltip.
 - [ ] **B4** **Kauf im AH-Fenster** (ein billiges Watchlist-Item, z. B. 2 Pyrit): Chat „… Im Journal gebucht.“
   Detailansicht: Bestand 2, Einstand = gezahlter Preis je Stück.
 - [ ] **B5** Zweiter Kauf desselben Items zu anderem Preis: Einstand ist der gewichtete Durchschnitt (von Hand nachrechnen).
 - [ ] **B6** Detailansicht → „Markttiefe“: In Phase Sammeln: „Bis zum Kauflimit sind N Stück für zusammen X zu haben.“
   plus „Preis für die ersten 20 Stück“.
 - [ ] **B7** **Verkaufssignal:** Item mit Bestand auf Phase „Abstoßen“, Zielpreis unter den aktuellen Nettopreis
-  → Signal „Verkaufen“. Markttiefe sagt dann „Unter deinem Zielpreis liegen N Stück vor dir.“
+  → gelber Punkt vor dem Namen, Signal „Verkaufen“. Markttiefe sagt dann „Unter deinem Zielpreis liegen N Stück vor dir.“
 - [ ] **B8** „Kaufen zum Entzaubern“ (Knopf im Kontor-Fenster): Liste öffnet sich (darf leer sein, solange zu
   wenig Entzauberdaten da sind). Falls eine Zeile da ist: Klick sucht das Item im AH-Fenster.
 
@@ -77,7 +77,7 @@ Nach Orten sortiert. Zum Melden reicht Nummer + „ok“ oder was anders war. Be
 - [ ] **F1** Ein paar grüne Items entzaubern: Chat wie bisher. Neues Material erscheint einmalig mit
   „in Korb "E - Verzauberung" aufgenommen“.
 - [ ] **F2** `/kontor entzauber export`: Oben die Gruppentabelle (Qualität;Klasse;Stufe;n;Material=…), darunter das Protokoll.
-- [ ] **F3** „Entzaubern“-Knopf im Kontor-Fenster: Liste der Items mit Empfehlung „Entzaubern“ (erst ab n ≥ 10 in
+- [ ] **F3** Minimap-Knopf (oder `/kontor entzaubern`): Liste der Items mit Empfehlung „Entzaubern“ (erst ab n ≥ 10 in
   der Gruppe; bis dahin ggf. leer). Großer Knopf „Nächstes entzaubern: [Item]“: **ein** Klick entzaubert genau ein Item.
 - [ ] **F4** Im Kampf auf den Knopf klicken: nichts passiert, keine Fehlermeldung.
 - [ ] **F5** Rechtsklick auf eine Zeile → „Nie entzaubern“: Zeile weg, auch nach `/reload`.

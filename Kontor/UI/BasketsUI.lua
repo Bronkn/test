@@ -53,22 +53,6 @@ textDialog("KONTOR_NEW_BASKET", "Name des neuen Korbs:", "Anlegen", function(tex
     Kontor:FireChange()
 end)
 
-textDialog("KONTOR_RENAME_BASKET", "Neuer Name für \"%s\":", "Umbenennen", function(text, data)
-    local basket = Kontor:GetBasket(data.id)
-    text = strtrim(text)
-    if basket and text ~= "" then basket.name = text Kontor:FireChange() end
-end)
-
-textDialog("KONTOR_BASKET_BUDGET", "Budget für \"%s\" (z. B. 50g, leer = kein Budget):", OKAY, function(text, data)
-    local basket = Kontor:GetBasket(data.id)
-    if basket then basket.budget = Kontor:ParseMoney(text) Kontor:FireChange() end
-end)
-
-textDialog("KONTOR_BASKET_NOTE", "Notiz zu \"%s\":", OKAY, function(text, data)
-    local basket = Kontor:GetBasket(data.id)
-    if basket then basket.note = strtrim(text) Kontor:FireChange() end
-end)
-
 StaticPopupDialogs["KONTOR_DELETE_BASKET"] = {
     text = "Korb \"%s\" wirklich löschen?\n\nDie Items verlieren Kauflimit, Zielpreis und Notizen. Journal und Preise bleiben.",
     button1 = DELETE, button2 = CANCEL,
@@ -128,26 +112,36 @@ end
 
 -- Stock, cost basis and break-even are in the detail window (user, 13.10.2026).
 local COLUMNS = {
-    { key = "name", title = "Item", width = 160 },
+    { key = "name", title = "Item", width = 170 },
     { key = "price", title = "Preis", width = 70, justify = "RIGHT" },
     { key = "age", title = "Alter", width = 50, justify = "RIGHT" },
     { key = "qty", title = "Menge AH", width = 58, justify = "RIGHT" },
     { key = "trend", title = "Trend Scan / 7 T.", width = 100, justify = "RIGHT" },
-    { key = "signal", title = "Signal", width = 110 },
+}
+
+-- Signal shown as a small icon before the item name (user, 13.10.2026);
+-- the text is in the row tooltip.
+local SIGNAL_ICONS = {
+    buy = "|TInterface\\COMMON\\Indicator-Green:14:14|t ",
+    sell = "|TInterface\\COMMON\\Indicator-Yellow:14:14|t ",
+    craft = "|TInterface\\Icons\\Trade_Alchemy:13:13|t ",
+    hint = "|TInterface\\COMMON\\Indicator-Red:14:14|t ",
 }
 
 local function fillRow(row, itemID)
     local basket = selectedBasket()
     local item = basket.items[itemID]
     local c = row.cells
+    local sig = Kontor:GetItemSignal(basket, item, itemID)
+    local prefix = (sig.kind and SIGNAL_ICONS[sig.kind]) or (sig.hint and SIGNAL_ICONS.hint) or ""
     local name, _, quality = C_Item.GetItemInfo(itemID)
     if name then
         local color = quality and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
-        c.name:SetText((color and color.hex or "") .. name .. (color and "|r" or ""))
+        c.name:SetText(prefix .. (color and color.hex or "") .. name .. (color and "|r" or ""))
     else
         -- not in the client cache yet; GET_ITEM_INFO_RECEIVED redraws the row
         if C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
-        c.name:SetText("|cff888888lädt ...|r")
+        c.name:SetText(prefix .. "|cff888888lädt ...|r")
     end
 
     local entry = Kontor:GetPrice(itemID)
@@ -161,14 +155,6 @@ local function fillRow(row, itemID)
     local trend = Kontor:GetTrend(itemID)
     c.trend:SetText(Kontor:FormatChange(trend.pPrev) .. " / " .. Kontor:FormatChange(trend.pWeek))
 
-    local sig = Kontor:GetItemSignal(basket, item, itemID)
-    if sig.kind then
-        c.signal:SetText(Kontor:SignalText(sig))
-    elseif sig.hint then
-        c.signal:SetText("|cffff8800über Festpreis|r")
-    else
-        c.signal:SetText("") -- no signal: nothing to say (user, 13.10.2026)
-    end
 end
 
 local function refresh()
@@ -198,8 +184,7 @@ local function refresh()
         return
     end
 
-    view.title:SetText(basket.name .. (basket.type == "werkstatt" and "  |cff66ccff(Werkstatt)|r" or ""))
-    view.phaseButton:SetText("Phase: " .. Kontor.PHASE_NAMES[basket.phase])
+    view.title:SetText(basket.name)
     view.note:SetText(basket.note ~= "" and ("Notiz: " .. basket.note) or "")
 
     local t = basketTotals(basket)
@@ -208,7 +193,7 @@ local function refresh()
         .. (basket.budget and (" / Budget " .. Kontor:FormatMoney(basket.budget)) or " (kein Budget)")
     if over then investText = "|cffff5555" .. investText .. " - Budget überschritten|r" end
     local unrealized = t.value - t.cost
-    view.stats:SetText(investText .. "  ·  Marktwert " .. Kontor:FormatMoney(t.value)
+    view.stats:SetText("Phase " .. Kontor.PHASE_NAMES[basket.phase] .. "  ·  " .. investText .. "  ·  Marktwert " .. Kontor:FormatMoney(t.value)
         .. "  ·  Unrealisiert " .. (unrealized < 0 and "-" or "+") .. Kontor:FormatMoney(math.abs(unrealized))
         .. "  ·  Plätze " .. t.slots)
 
@@ -240,11 +225,10 @@ end
 function Kontor:BuildBasketView(frame)
     view = { frame = frame, basketButtons = {}, basketWidgets = {}, basketOffset = 0 }
 
-    -- top bar, next to "Verkaufsliste"
-    local deButton = self:CreateButton(frame, "Entzaubern", 100, function() Kontor:ShowDisenchantWindow() end)
-    deButton:SetPoint("TOPRIGHT", -136, -30)
+    -- top bar after the scan status (the disenchant window has the minimap button)
     local buyButton = self:CreateButton(frame, "Kaufen zum Entzaubern", 160, function() Kontor:ShowDisenchantBuys() end)
-    buyButton:SetPoint("RIGHT", deButton, "LEFT", -4, 0)
+    buyButton:SetPoint("TOPLEFT", 346, -30)
+    self:CreatePostingButton(frame, "LEFT", buyButton, "RIGHT", 4, 0)
 
     -- left: baskets
     local header = self:CreateLabel(frame, "Körbe", "GameFontNormal")
@@ -263,14 +247,14 @@ function Kontor:BuildBasketView(frame)
         end)
         view.basketButtons[i] = b
     end
-    local new = self:CreateButton(frame, "Neu", 56, function() showDialog("KONTOR_NEW_BASKET") end)
+    local new = self:CreateButton(frame, "Neu", 48, function() showDialog("KONTOR_NEW_BASKET") end)
     new:SetPoint("BOTTOMLEFT", 12, 40)
-    local rename = self:CreateButton(frame, "Name", 56, function()
+    local rename = self:CreateButton(frame, "Bearbeiten", 72, function()
         local b = selectedBasket()
-        if b then showDialog("KONTOR_RENAME_BASKET", b.name, { id = b.id, default = b.name }) end
+        if b then Kontor:ShowBasketEditor(b.id) end
     end)
     rename:SetPoint("LEFT", new, "RIGHT", 2, 0)
-    local delete = self:CreateButton(frame, "Löschen", 56, function()
+    local delete = self:CreateButton(frame, "Löschen", 48, function()
         local b = selectedBasket()
         if b then showDialog("KONTOR_DELETE_BASKET", b.name, { id = b.id }) end
     end)
@@ -283,28 +267,6 @@ function Kontor:BuildBasketView(frame)
     -- right: selected basket
     view.title = self:CreateLabel(frame, "", "GameFontNormalLarge")
     view.title:SetPoint("TOPLEFT", LEFT, -66)
-
-    local phase = self:CreateButton(frame, "Phase", 150, function()
-        local b = selectedBasket()
-        if not b then return end
-        local list = Kontor.PHASES
-        for i, p in ipairs(list) do
-            if p == b.phase then b.phase = list[i % #list + 1] break end
-        end
-        Kontor:FireChange()
-    end)
-    phase:SetPoint("TOPRIGHT", -16, -62)
-    view.phaseButton = phase
-    local budget = self:CreateButton(frame, "Budget", 70, function()
-        local b = selectedBasket()
-        if b then showDialog("KONTOR_BASKET_BUDGET", b.name, { id = b.id, default = Kontor:MoneyInputText(b.budget) }) end
-    end)
-    budget:SetPoint("RIGHT", phase, "LEFT", -4, 0)
-    local note = self:CreateButton(frame, "Notiz", 60, function()
-        local b = selectedBasket()
-        if b then showDialog("KONTOR_BASKET_NOTE", b.name, { id = b.id, default = b.note }) end
-    end)
-    note:SetPoint("RIGHT", budget, "LEFT", -4, 0)
 
     view.stats = self:CreateLabel(frame, "")
     view.stats:SetPoint("TOPLEFT", LEFT, -90)
@@ -345,19 +307,23 @@ function Kontor:BuildBasketView(frame)
         GameTooltip:AddLine("Menge Trend: " .. Kontor:FormatChange(t.qPrev) .. " / " .. Kontor:FormatChange(t.qWeek), 1, 1, 1)
         local accountText = Kontor:AccountCountText(itemID)
         if accountText then GameTooltip:AddLine(accountText, 1, 1, 1) end
+        local basket = selectedBasket()
+        local sig = Kontor:GetItemSignal(basket, basket.items[itemID], itemID)
+        if sig.kind then GameTooltip:AddLine("Signal: " .. Kontor:SignalText(sig)) end
+        if sig.hint then GameTooltip:AddLine(sig.hint, 1, 0.53, 0) end
         GameTooltip:AddLine("Klick: Details  ·  Rechtsklick: aus dem Korb entfernen", 0.6, 0.6, 0.6)
         GameTooltip:Show()
     end
 
     local addLabel = self:CreateLabel(frame, "Item hinzufügen (Umschalt-Klick, Ziehen, ID):")
     addLabel:SetPoint("BOTTOMLEFT", LEFT, 18)
-    local input = self:CreateInput(frame, 150)
+    local input = self:CreateInput(frame, 120)
     input:SetPoint("LEFT", addLabel, "RIGHT", 10, 0)
     input.onEnter = addItemFromInput
     local add = self:CreateButton(frame, "Hinzufügen", 90, function() addItemFromInput(input) end)
     add:SetPoint("LEFT", input, "RIGHT", 6, 0)
 
-    view.basketWidgets = { phase, budget, note, rename, delete, addLabel, input, add }
+    view.basketWidgets = { rename, delete, addLabel, input, add }
 
     frame:HookScript("OnShow", refresh)
     Kontor:OnChange(refresh)
@@ -388,3 +354,60 @@ Kontor:RegisterEvent("PLAYER_LOGIN", "Körbe", function()
         end
     end
 end)
+
+-- Basket editor: name, phase, budget, note (replaces the header buttons, 13.10.2026)
+local editor
+
+function Kontor:ShowBasketEditor(basketId)
+    if not editor then
+        local f = self:CreateWindow("KontorBasketEditor", "Kontor - Korb bearbeiten", 340, 230, "basketEditor")
+        local function row(label, y)
+            local l = self:CreateLabel(f, label)
+            l:SetPoint("TOPLEFT", 20, y)
+            return l
+        end
+        row("Name:", -72)
+        f.name = self:CreateInput(f, 200)
+        f.name:SetPoint("TOPLEFT", 110, -68)
+        row("Phase:", -100)
+        f.phase = self:CreateButton(f, "", 200, function()
+            local list = Kontor.PHASES
+            for i, p in ipairs(list) do
+                if p == f.phaseValue then f.phaseValue = list[i % #list + 1] break end
+            end
+            f.phase:SetText(Kontor.PHASE_NAMES[f.phaseValue])
+        end)
+        f.phase:SetPoint("TOPLEFT", 106, -96)
+        row("Budget:", -128)
+        f.budget = self:CreateInput(f, 110)
+        f.budget:SetPoint("TOPLEFT", 110, -124)
+        local hint = self:CreateLabel(f, "z. B. 50g, leer = keins", "GameFontDisableSmall")
+        hint:SetPoint("LEFT", f.budget, "RIGHT", 8, 0)
+        row("Notiz:", -156)
+        f.note = self:CreateInput(f, 200)
+        f.note:SetPoint("TOPLEFT", 110, -152)
+        local save = self:CreateButton(f, "Speichern", 110, function()
+            local b = Kontor:GetBasket(f.basketId)
+            if not b then f:Hide() return end
+            local name = strtrim(f.name:GetText())
+            if name ~= "" then b.name = name end
+            b.phase = f.phaseValue
+            b.budget = Kontor:ParseMoney(f.budget:GetText())
+            b.note = strtrim(f.note:GetText())
+            f:Hide()
+            Kontor:FireChange()
+        end)
+        save:SetPoint("BOTTOMRIGHT", -16, 14)
+        f.name.onEnter = function() save:Click() end
+        editor = f
+    end
+    local b = self:GetBasket(basketId)
+    if not b then return end
+    editor.basketId = basketId
+    editor.phaseValue = b.phase
+    editor.name:SetText(b.name)
+    editor.phase:SetText(self.PHASE_NAMES[b.phase])
+    editor.budget:SetText(self:MoneyInputText(b.budget))
+    editor.note:SetText(b.note or "")
+    editor:Show()
+end

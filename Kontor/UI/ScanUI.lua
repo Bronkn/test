@@ -45,7 +45,7 @@ function Kontor:CreateScanWidget(parent, point, relativeTo, relativePoint, x, y)
     local label = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     label:SetPoint("LEFT", button, "RIGHT", 8, 0)
     label:SetJustifyH("LEFT")
-    label:SetWidth(210)
+    label:SetWidth(160)
     label:SetWordWrap(false)
 
     table.insert(widgets, { button = button, label = label })

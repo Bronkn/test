@@ -98,3 +98,9 @@ Nachtrag 0.4.1: Die Mindestgrenze von 10 Silber je Stapel wurde auf Wunsch des N
   gleicher Realm, beide Fraktionen. Die Einkaufsliste rechnet weiter mit dem Bestand des aktuellen
   Charakters (Nachtrag 1, 4.2).
 - Beide Addons sind optional (`## OptionalDeps`); ohne sie läuft Kontor wie bisher.
+
+## 13.10.2026 – Kontor-Fenster nach Designvorlage des Nutzers
+
+Die Signal-Spalte entfällt. Pflichtenheft 4.8 verlangt Signale in der Korb-Tabelle; sie erscheinen deshalb als
+kleines Symbol vor dem Item-Namen (Text im Zeilen-Tooltip). Notiz, Budget und Phase sind über „Bearbeiten“
+erreichbar, das Entzauber-Fenster über den Minimap-Knopf und `/kontor entzaubern`.
