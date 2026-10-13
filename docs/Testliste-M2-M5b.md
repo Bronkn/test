@@ -47,11 +47,11 @@ Falls ein Scan ohne dein Zutun mit „andere Suche im Auktionshaus gestartet“ 
 
 ## C – Tooltip (überall, 2 Min.)
 
-- [ ] **C1** Mit der Maus über ein gescanntes Item in der Tasche: Zeile „AH-Tiefstpreis: … · vor … Min.“
-- [ ] **C2** Über ein Item, das nicht im AH war: keine Zeile.
-- [ ] **C3** Ein Item-Link im Chat anklicken: Die Zeile steht auch im aufgehenden Fenster.
-- [ ] **C4** `/kontor tooltip` → Zeile weg. Nochmal `/kontor tooltip` → Zeile wieder da.
-- [ ] **C5** Im Kampf (z. B. ein Mob) über Items fahren: keine Fehlermeldung. (Die Zeile fehlt im Kampf absichtlich.)
+- [x] **C1** Mit der Maus über ein gescanntes Item in der Tasche: Zeile „AH-Tiefstpreis: … · vor … Min.“
+- [x] **C2** Über ein Item, das nicht im AH war: keine Zeile.
+- [x] **C3** Ein Item-Link im Chat anklicken: Die Zeile steht auch im aufgehenden Fenster.
+- [x] **C4** `/kontor tooltip` → Zeile weg. Nochmal `/kontor tooltip` → Zeile wieder da.
+- [x] **C5** Im Kampf (z. B. ein Mob) über Items fahren: keine Fehlermeldung. (Die Zeile fehlt im Kampf absichtlich.)
 
 ## D – Beim Händler (5 Min.)
 
