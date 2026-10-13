@@ -185,6 +185,13 @@ Fehlt eines davon, lädt das Addon trotzdem; der Fehler steht dann in `/kontor f
 - Tiefstpreise stimmen mit dem AH-Fenster überein, Markttiefe und Kauf-Erkennung funktionieren (Testliste Block B).
 - Blizzards AH-Fenster hat den Scan nicht durch eigene Suchen abgebrochen.
 
+## Marktkennung: Hinweis auf gemeinsames AH (13.10.2026)
+
+Ein Horde-Charakter erhält AH-Post sowohl vom Auktionshaus Orgrimmar als auch von Sturmwind. Das deutet auf
+ein **fraktionsübergreifendes AH** hin (wie Retail). Noch nicht bestätigt; ein Allianz-Charakter war nicht
+verfügbar. Falls bestätigt: Marktkennung nur noch nach Realm, vorhandene Fraktions-Märkte zusammenführen
+(Pflichtenheft, offener Punkt 2). Bis dahin bleibt die Trennung nach Fraktion.
+
 ## Erkenntnisse zu Rezepten
 
 - Händlerzutat von Sulfuric Acid (Schwefelsäure) ist **Leere Phiole** (Classic-ID 3371, in Forever noch zu bestätigen).

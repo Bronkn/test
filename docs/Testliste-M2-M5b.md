@@ -93,7 +93,7 @@ Vorbereitung: frischer Scan, ein paar Items in der Tasche, die im AH gut Geld br
 
 ## F – Andere Fraktion (1 Min.)
 
-- [ ] **F1** Auf einem Allianz-Charakter `/kontor status`: Markt endet auf „-Alliance“, Preise: 0.
+- [~] **F1** (nicht testbar: kein Allianz-Charakter auf dem Server; Hinweis auf gemeinsames AH, siehe API-NOTIZEN) Auf einem Allianz-Charakter `/kontor status`: Markt endet auf „-Alliance“, Preise: 0.
   Tooltip zeigt dort keine Horde-Preise.
 
 ---
