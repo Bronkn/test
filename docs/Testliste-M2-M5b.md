@@ -69,13 +69,13 @@ Vorbereitung: ein paar billige grüne oder weiße Items in der Tasche, die nach 
 
 ## E – Entzaubern (Bankcharakter, 5 Min.)
 
-- [ ] **E1** Ein grünes Item entzaubern. Chat: „Entzaubert: [Item] → 2× [Material]“ (Item und Ergebnis korrekt?).
-- [ ] **E2** Noch zwei, drei Items entzaubern, auch mit offenem Beutefenster und mit automatischem Plündern,
+- [x] **E1** Ein grünes Item entzaubern. Chat: „Entzaubert: [Item] → 2× [Material]“ (Item und Ergebnis korrekt?).
+- [x] **E2** Noch zwei, drei Items entzaubern, auch mit offenem Beutefenster und mit automatischem Plündern,
   falls du das nutzt.
-- [ ] **E3** `/kontor entzauber export`: Fenster mit einer Zeile pro Entzaubern (Stufe, Qualität, Ergebnis).
-- [ ] **E4** Einen Gegner looten: **kein** neuer Eintrag im Export.
-- [ ] **E5** Ein Entzaubern mittendrin abbrechen (bewegen): kein Eintrag, keine Fehlermeldung.
-- [ ] **E6** `/reload`, dann `/kontor status`: Die Zahl der Entzauber-Einträge ist noch da.
+- [x] **E3** `/kontor entzauber export`: Fenster mit einer Zeile pro Entzaubern (Stufe, Qualität, Ergebnis).
+- [x] **E4** Einen Gegner looten: **kein** neuer Eintrag im Export.
+- [x] **E5** Ein Entzaubern mittendrin abbrechen (bewegen): kein Eintrag, keine Fehlermeldung.
+- [x] **E6** `/reload`, dann `/kontor status`: Die Zahl der Entzauber-Einträge ist noch da.
 
 ## G – Verkaufsliste (neu in 0.4.0, am AH, 5 Min.)
 
