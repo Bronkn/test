@@ -115,6 +115,7 @@ local function createListFrame()
     frame.more = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     frame.more:SetPoint("BOTTOMLEFT", 16, 40)
     frame.more:SetJustifyH("LEFT")
+    frame.more:SetWidth(600)
 
     local note = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     note:SetPoint("BOTTOMLEFT", 16, 18)
@@ -127,7 +128,7 @@ end
 
 function Kontor:RefreshPostingList()
     if not listFrame or not listFrame:IsShown() then return end
-    local list = self:FindPostingCandidates()
+    local list, skipped = self:FindPostingCandidates()
     for i, row in ipairs(listFrame.rows) do
         local c = list[i]
         row.data = c
@@ -145,14 +146,17 @@ function Kontor:RefreshPostingList()
             row:Hide()
         end
     end
-    if #list == 0 then
-        listFrame.more:SetText("Nichts gefunden. Ohne frischen Scan-Preis (höchstens "
-            .. self.db.config.maxPriceAgeHours .. " Std.) wird nichts vorgeschlagen.")
-    elseif #list > MAX_ROWS then
-        listFrame.more:SetText("Weitere " .. (#list - MAX_ROWS) .. " Stapel rücken nach, sobald diese eingestellt sind.")
-    else
-        listFrame.more:SetText("")
+    local reasons = {}
+    for reason, n in pairs(skipped) do
+        table.insert(reasons, n .. " " .. reason)
     end
+    table.sort(reasons)
+    local text = #list > MAX_ROWS and ("Weitere " .. (#list - MAX_ROWS) .. " Stapel rücken nach. ") or ""
+    if #list == 0 then text = "Nichts gefunden. " end
+    if #reasons > 0 then
+        text = text .. "Nicht in der Liste: " .. table.concat(reasons, ", ") .. "."
+    end
+    listFrame.more:SetText(text)
 end
 
 function Kontor:TogglePostingList()

@@ -66,5 +66,7 @@ Ein Knopf, der alles einstellt, widerspricht Pflichtenheft 2, 6.1 und 7 und ist 
 - Kein Unterbieten: Den Preis setzt Blizzard (aktueller Tiefstpreis). Pflichtenheft 7 schließt eine
   Undercut-Automatik aus.
 - Inhalt (vom Nutzer offen gelassen, so festgelegt): Taschen-Items, deren AH-Preis nach Gebühr über dem
-  Händlerpreis liegt, mindestens 10 Silber je Stapel (`postMinValue`), frischer Preis, gelistet, nicht
+  Händlerpreis liegt, frischer Preis, gelistet, nicht
   gebunden, keine Quest-Items, **nicht in einem Korb**. Korb-Items in Phase „Abstoßen“ kommen mit M6/M10 dazu.
+
+Nachtrag 0.4.1: Die Mindestgrenze von 10 Silber je Stapel wurde auf Wunsch des Nutzers gestrichen.

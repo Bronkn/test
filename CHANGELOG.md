@@ -2,6 +2,11 @@
 
 ## [Unveröffentlicht]
 
+### 0.4.1 – Verkaufsliste ohne Mindestwert
+- Die Grenze von 10 Silber je Stapel entfällt: Einzelne Splitter oder wenige Stück Staub fehlten in der Liste (Test 13.10.2026). Die Liste ist nach Erlös sortiert, Kleinkram steht unten.
+- Unter der Liste steht, welche Items warum fehlen (z. B. „2 ohne Scan-Preis, 1 gebunden“).
+
+
 ### 0.4.0 – Verkaufsliste
 - **Neu:** Knopf „Verkaufsliste“ über dem AH-Fenster und im Kontor-Fenster, auch `/kontor verkaufen`. Listet Taschen-Items, die im AH netto mehr bringen als beim Händler (mindestens 10 Silber je Stapel, frischer Scan-Preis, nicht gebunden, nicht in einem Korb).
 - Linksklick legt den Stapel in Blizzards Verkaufsfenster; Blizzard setzt den aktuellen Tiefstpreis. Eingestellt wird über „Auktion erstellen“ im AH-Fenster, nicht vom Addon.

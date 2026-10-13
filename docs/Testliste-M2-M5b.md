@@ -81,13 +81,15 @@ Vorbereitung: ein paar billige grüne oder weiße Items in der Tasche, die nach 
 
 Vorbereitung: frischer Scan, ein paar Items in der Tasche, die im AH gut Geld bringen (z. B. Kräuter, Erz).
 
-- [ ] **G1** Über dem AH-Fenster oben rechts steht der Knopf „Verkaufsliste“. Klick öffnet die Liste.
-- [ ] **G2** Die Liste zeigt nur Items, die im AH netto mehr bringen als beim Händler (Spalten vergleichen).
-- [ ] **G3** Linksklick auf eine Zeile: Das AH wechselt zum Verkaufen, das Item liegt im Verkaufsfenster,
+- [x] **G1** Über dem AH-Fenster oben rechts steht der Knopf „Verkaufsliste“. Klick öffnet die Liste.
+- [x] **G2** Die Liste zeigt nur Items, die im AH netto mehr bringen als beim Händler (Spalten vergleichen).
+- [x] **G3** Linksklick auf eine Zeile: Das AH wechselt zum Verkaufen, das Item liegt im Verkaufsfenster,
   ein Preis ist eingetragen. **Selbst** auf „Auktion erstellen“ klicken: Die Auktion wird erstellt,
   **keine** Fehlermeldung (auch nicht „Aktion blockiert“). Die Zeile verschwindet aus der Liste.
-- [ ] **G4** Rechtsklick auf eine Zeile → „Nicht anbieten“: Die Zeile verschwindet und kommt nicht wieder.
-- [ ] **G5** AH schließen: Die Liste geht mit zu.
+- [x] **G4** Rechtsklick auf eine Zeile → „Nicht anbieten“: Die Zeile verschwindet und kommt nicht wieder.
+- [x] **G5** AH schließen: Die Liste geht mit zu.
+- [ ] **G6** (0.4.1) Splitter und Staub ohne Händlerwert erscheinen in der Liste. Fehlt etwas, steht unter
+  der Liste der Grund (Screenshot).
 
 ## F – Andere Fraktion (1 Min.)
 

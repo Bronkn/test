@@ -5,34 +5,37 @@
 
 local _, Kontor = ...
 
--- Returns candidate stacks, highest net AH value first.
+-- Returns candidate stacks, highest net AH value first, plus a count of
+-- skipped stacks per reason (shown when items are missing from the list).
 -- Each: { bag, slot, itemID, link, icon, count, unitPrice, ahNetTotal, vendorTotal, priceTime }
 function Kontor:FindPostingCandidates()
     local db = self.db
-    local cfg = db.config
-    local list = {}
+    local list, skipped = {}, {}
+    local function skip(reason) skipped[reason] = (skipped[reason] or 0) + 1 end
 
     self:ForEachBagItem(function(bag, slot, info)
         local itemID = info.itemID
-        if info.isBound then return end
-        if db.postExclusions[itemID] then return end
+        if info.isBound then return skip("gebunden") end
+        if db.postExclusions[itemID] then return skip("nicht anbieten") end
         -- Watchlist items are sold by their basket phase (M6/M10), not from here.
-        if self:FindBasketItem(itemID) then return end
+        if self:FindBasketItem(itemID) then return skip("im Korb") end
 
         local entry = self:GetPrice(itemID)
-        if not entry or not entry.p or entry.listed == false or not self:IsPriceFresh(entry) then return end
+        if not entry or not entry.p then return skip("ohne Scan-Preis") end
+        if entry.listed == false then return skip("zuletzt nicht im AH") end
+        if not self:IsPriceFresh(entry) then return skip("Preis zu alt") end
 
         local sellPrice, classID = select(11, C_Item.GetItemInfo(itemID))
         if sellPrice == nil then
             if C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(itemID) end
-            return
+            return skip("Item-Daten laden noch")
         end
-        if classID == ((Enum.ItemClass and Enum.ItemClass.Questitem) or 12) then return end
+        if classID == ((Enum.ItemClass and Enum.ItemClass.Questitem) or 12) then return skip("Quest-Item") end
 
         local count = info.stackCount or 1
         local net = self:NetPrice(entry.p)
-        if net <= sellPrice then return end -- vendor is as good: that is Aufräumen's job
-        if net * count < cfg.postMinValue then return end
+        -- vendor is as good: that is Aufräumen's job
+        if net <= sellPrice then return skip("Händler bringt mehr") end
 
         table.insert(list, {
             bag = bag, slot = slot, itemID = itemID,
@@ -45,7 +48,7 @@ function Kontor:FindPostingCandidates()
     end)
 
     table.sort(list, function(a, b) return a.ahNetTotal > b.ahNetTotal end)
-    return list
+    return list, skipped
 end
 
 -- Puts the stack into Blizzard's sell frame. Blizzard fills in the current
