@@ -2,6 +2,14 @@
 
 ## [Unveröffentlicht]
 
+### 0.5.2 – Kompaktere Fenster (Designwünsche 13.10.2026)
+- Korb-Tabelle ohne Bestand, Plätze, Einstand, Break-even (stehen in der Detailansicht). Signal-Spalte zeigt nur echte Signale.
+- Kontor-Fenster schmaler (800 statt 980) und so hoch wie nötig: 4 bis 16 Item-Zeilen je nach Korb, mehr per Mausrad mit Hinweis „Zeilen x-y von z“. Korbliste ab 12 Körben per Mausrad.
+- Alter kurz: „jetzt“, „12 Min.“, „3 Std.“, „4 T.“.
+- Schmaler: Detailansicht, Rezepte, Text- und Eingabefenster, Einstellungen, Verkaufsliste, Kaufen zum Entzaubern.
+- Fensterpositionen werden als linke obere Ecke gespeichert, damit Fenster nach unten wachsen.
+
+
 ### 0.5.1 – Minimap-Knopf, Baganator und Syndicator
 - **Minimap-Knopf** (nur auf Charakteren mit Entzaubern): Linksklick öffnet das Entzauber-Fenster, Rechtsklick das Kontor-Fenster, ziehen verschiebt ihn. Abschaltbar in den Einstellungen.
 - **Baganator:** vier Ecken-Symbole auf den Taschenfächern: Entzaubern (bzw. an Bankchar schicken), beim Händler verkaufen, im AH verkaufen (oben links, je nach Empfehlung) und Item im Korb (oben rechts). Verschieben oder abschalten in Baganators Einstellungen unter den Ecken-Symbolen.

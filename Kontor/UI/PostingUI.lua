@@ -24,17 +24,17 @@ StaticPopupDialogs["KONTOR_NEVER_POST"] = {
 }
 
 local COLUMNS = {
-    { key = "name", title = "Item", x = 30, width = 190, justify = "LEFT" },
-    { key = "count", title = "Menge", x = 224, width = 44, justify = "RIGHT" },
-    { key = "unit", title = "AH je Stück", x = 274, width = 80, justify = "RIGHT" },
-    { key = "net", title = "Erlös netto", x = 360, width = 84, justify = "RIGHT" },
-    { key = "vendor", title = "Händler", x = 450, width = 70, justify = "RIGHT" },
-    { key = "age", title = "Preis", x = 526, width = 70, justify = "RIGHT" },
+    { key = "name", title = "Item", x = 30, width = 170, justify = "LEFT" },
+    { key = "count", title = "Menge", x = 204, width = 40, justify = "RIGHT" },
+    { key = "unit", title = "AH je Stück", x = 250, width = 72, justify = "RIGHT" },
+    { key = "net", title = "Erlös netto", x = 328, width = 76, justify = "RIGHT" },
+    { key = "vendor", title = "Händler", x = 410, width = 66, justify = "RIGHT" },
+    { key = "age", title = "Preis", x = 482, width = 50, justify = "RIGHT" },
 }
 
 local function createRow(parent, index)
     local row = CreateFrame("Button", nil, parent)
-    row:SetSize(600, ROW_HEIGHT)
+    row:SetSize(530, ROW_HEIGHT)
     row:SetPoint("TOPLEFT", 12, -84 - (index - 1) * ROW_HEIGHT)
     row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
@@ -90,11 +90,11 @@ local function createRow(parent, index)
 end
 
 local function createListFrame()
-    local frame = Kontor:CreateWindow("KontorPostingFrame", "Kontor - Verkaufsliste", 630, 520, "posting")
+    local frame = Kontor:CreateWindow("KontorPostingFrame", "Kontor - Verkaufsliste", 560, 520, "posting")
 
     local intro = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     intro:SetPoint("TOPLEFT", 64, -32)
-    intro:SetWidth(540)
+    intro:SetWidth(470)
     intro:SetJustifyH("LEFT")
     intro:SetText("Diese Items bringen im AH mehr als beim Händler. Klick legt das Item ins Verkaufsfenster; "
         .. 'Preis prüfen und dort selbst auf "Auktion erstellen" klicken.')
@@ -115,11 +115,11 @@ local function createListFrame()
     frame.more = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     frame.more:SetPoint("BOTTOMLEFT", 16, 40)
     frame.more:SetJustifyH("LEFT")
-    frame.more:SetWidth(600)
+    frame.more:SetWidth(530)
 
     local note = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     note:SetPoint("BOTTOMLEFT", 16, 18)
-    note:SetWidth(600)
+    note:SetWidth(530)
     note:SetJustifyH("LEFT")
     note:SetText("Hinweis: Die Einlage geht verloren, wenn die Auktion ausläuft oder abgebrochen wird.")
 
@@ -140,7 +140,7 @@ function Kontor:RefreshPostingList()
             row.cells.unit:SetText(self:FormatMoney(c.unitPrice))
             row.cells.net:SetText(self:FormatMoney(c.ahNetTotal))
             row.cells.vendor:SetText(self:FormatMoney(c.vendorTotal))
-            row.cells.age:SetText(self:FormatAge(c.priceTime))
+            row.cells.age:SetText(self:FormatAgeShort(c.priceTime))
             row:Show()
         else
             row:Hide()

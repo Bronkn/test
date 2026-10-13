@@ -2,7 +2,7 @@
 ## Title: Kontor
 ## Notes: Auktionshaus-Vorräte: Preise, Verlauf, Bestand und Signale.
 ## Author: Kontor
-## Version: 0.5.1
+## Version: 0.5.2
 ## SavedVariables: KontorDB
 ## OptionalDeps: Baganator, Syndicator
 

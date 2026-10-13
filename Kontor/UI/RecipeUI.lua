@@ -183,12 +183,12 @@ local function refresh()
 end
 
 local function createWindow()
-    local f = Kontor:CreateWindow("KontorRecipes", "Kontor - Rezepte", 820, 540, "recipes")
+    local f = Kontor:CreateWindow("KontorRecipes", "Kontor - Rezepte", 700, 540, "recipes")
     f.list = {}
     local legend = Kontor:CreateLabel(f, "Rezepte  (|cffff8800*|r = unvollständig)", "GameFontNormal")
     legend:SetPoint("TOPLEFT", 16, -66)
     for i = 1, MAX_LIST do
-        local b = Kontor:CreateButton(f, "", 210, function(btn) selectedKey = btn.key refresh() end)
+        local b = Kontor:CreateButton(f, "", 190, function(btn) selectedKey = btn.key refresh() end)
         b:SetPoint("TOPLEFT", 12, -84 - (i - 1) * 24)
         b:GetFontString():SetJustifyH("LEFT")
         f.list[i] = b
@@ -205,26 +205,26 @@ local function createWindow()
     delete:SetPoint("LEFT", edit, "RIGHT", 2, 0)
 
     f.detail = Kontor:CreateLabel(f, "")
-    f.detail:SetPoint("TOPLEFT", 240, -66)
-    f.detail:SetWidth(560)
+    f.detail:SetPoint("TOPLEFT", 218, -66)
+    f.detail:SetWidth(466)
     f.detail:SetSpacing(3)
 
     local shopLabel = Kontor:CreateLabel(f, "Einkaufsliste für Anzahl oder Budget:")
-    shopLabel:SetPoint("TOPLEFT", 240, -300)
+    shopLabel:SetPoint("TOPLEFT", 218, -300)
     f.shoppingInput = Kontor:CreateInput(f, 90)
     f.shoppingInput:SetPoint("LEFT", shopLabel, "RIGHT", 10, 0)
     f.shoppingInput.onEnter = refresh
     local calcButton = Kontor:CreateButton(f, "Berechnen", 90, refresh)
     calcButton:SetPoint("LEFT", f.shoppingInput, "RIGHT", 6, 0)
     f.shopping = Kontor:CreateLabel(f, "")
-    f.shopping:SetPoint("TOPLEFT", 240, -326)
-    f.shopping:SetWidth(560)
+    f.shopping:SetPoint("TOPLEFT", 218, -326)
+    f.shopping:SetWidth(466)
     f.shopping:SetSpacing(2)
 
-    local importLabel = Kontor:CreateLabel(f, "Aus dem Berufsfenster: Rezept per Umschalt-Klick hier einfügen:")
-    importLabel:SetPoint("BOTTOMLEFT", 240, 44)
-    local importInput = Kontor:CreateInput(f, 300)
-    importInput:SetPoint("BOTTOMLEFT", 240, 16)
+    local importLabel = Kontor:CreateLabel(f, "Aus dem Berufsfenster (Umschalt-Klick aufs Rezept):")
+    importLabel:SetPoint("BOTTOMLEFT", 218, 44)
+    local importInput = Kontor:CreateInput(f, 280)
+    importInput:SetPoint("BOTTOMLEFT", 222, 16)
     local importButton = Kontor:CreateButton(f, "Rezept übernehmen", 150, function()
         local ok, msg = Kontor:ImportRecipe(importInput:GetText())
         if ok then

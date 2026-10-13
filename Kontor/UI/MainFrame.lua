@@ -4,9 +4,13 @@ local _, Kontor = ...
 
 local ICON = "Interface\\Icons\\INV_Misc_Coin_02"
 
+-- Stored as top-left corner, so windows that change their height grow
+-- downwards instead of around their centre.
 local function savePosition(frame)
-    local point, _, relativePoint, x, y = frame:GetPoint(1)
-    Kontor.db.ui[frame.positionKey] = { point = point, relativePoint = relativePoint, x = x, y = y }
+    local left, top = frame:GetLeft(), frame:GetTop()
+    if left and top then
+        Kontor.db.ui[frame.positionKey] = { point = "TOPLEFT", relativePoint = "BOTTOMLEFT", x = left, y = top }
+    end
 end
 
 local function restorePosition(frame)
@@ -78,7 +82,7 @@ end
 local mainFrame
 
 local function createMainFrame()
-    local frame = Kontor:CreateWindow("KontorMainFrame", "Kontor", 980, 560, "main")
+    local frame = Kontor:CreateWindow("KontorMainFrame", "Kontor", 800, 480, "main") -- size set by the basket view
     Kontor:CreateScanWidget(frame, "TOPLEFT", frame, "TOPLEFT", 64, -30)
     Kontor:CreatePostingButton(frame, "TOPRIGHT", frame, "TOPRIGHT", -12, -30)
     Kontor:BuildBasketView(frame) -- UI/BasketsUI.lua

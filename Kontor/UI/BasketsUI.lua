@@ -3,8 +3,10 @@
 
 local _, Kontor = ...
 
-local MAX_BASKETS = 14
-local ROWS = 16
+local MAX_BASKETS = 12 -- basket buttons on screen; more scroll with the mouse wheel
+local ROWS = 16 -- item rows at most; the window grows with the basket up to this
+local MIN_ROWS = 4
+local LEFT = 200 -- x of the right-hand part
 
 local view -- the widgets, created once
 local selectedId -- id of the selected basket
@@ -124,17 +126,14 @@ end
 
 -- Rendering --------------------------------------------------------------------
 
+-- Stock, cost basis and break-even are in the detail window (user, 13.10.2026).
 local COLUMNS = {
-    { key = "name", title = "Item", width = 150 },
-    { key = "price", title = "Preis", width = 64, justify = "RIGHT" },
-    { key = "age", title = "Alter", width = 52, justify = "RIGHT" },
-    { key = "qty", title = "Menge AH", width = 50, justify = "RIGHT" },
-    { key = "trend", title = "Trend Scan / 7 T.", width = 92, justify = "RIGHT" },
-    { key = "stock", title = "Bestand", width = 44, justify = "RIGHT" },
-    { key = "slots", title = "Plätze", width = 36, justify = "RIGHT" },
-    { key = "cost", title = "Einstand", width = 60, justify = "RIGHT" },
-    { key = "be", title = "Break-even", width = 60, justify = "RIGHT" },
-    { key = "signal", title = "Signal", width = 104 },
+    { key = "name", title = "Item", width = 160 },
+    { key = "price", title = "Preis", width = 70, justify = "RIGHT" },
+    { key = "age", title = "Alter", width = 50, justify = "RIGHT" },
+    { key = "qty", title = "Menge AH", width = 58, justify = "RIGHT" },
+    { key = "trend", title = "Trend Scan / 7 T.", width = 100, justify = "RIGHT" },
+    { key = "signal", title = "Signal", width = 110 },
 }
 
 local function fillRow(row, itemID)
@@ -154,7 +153,7 @@ local function fillRow(row, itemID)
     local entry = Kontor:GetPrice(itemID)
     if entry and entry.p then
         c.price:SetText(Kontor:FormatMoney(entry.p))
-        c.age:SetText((Kontor:FormatAge(entry.t):gsub("^vor ", "")))
+        c.age:SetText(Kontor:FormatAgeShort(entry.t))
         c.qty:SetText(entry.listed == false and "0" or (entry.q or 0))
     else
         c.price:SetText("-") c.age:SetText("-") c.qty:SetText("-")
@@ -162,20 +161,13 @@ local function fillRow(row, itemID)
     local trend = Kontor:GetTrend(itemID)
     c.trend:SetText(Kontor:FormatChange(trend.pPrev) .. " / " .. Kontor:FormatChange(trend.pWeek))
 
-    local stock, avg = Kontor:GetPosition(itemID)
-    c.stock:SetText(stock > 0 and stock or "-")
-    c.slots:SetText(stock > 0 and (Kontor:StorageSlots(itemID, stock) or "?") or "-")
-    c.cost:SetText(avg and Kontor:FormatMoney(avg) or "-")
-    c.be:SetText(avg and Kontor:FormatMoney(Kontor:BreakEven(avg)) or "-")
-
     local sig = Kontor:GetItemSignal(basket, item, itemID)
     if sig.kind then
         c.signal:SetText(Kontor:SignalText(sig))
     elseif sig.hint then
         c.signal:SetText("|cffff8800über Festpreis|r")
     else
-        local phase = Kontor:GetItemPhase(basket, item)
-        c.signal:SetText("|cff888888" .. Kontor.PHASE_NAMES[phase] .. (item.phase and " (Item)" or "") .. "|r")
+        c.signal:SetText("") -- no signal: nothing to say (user, 13.10.2026)
     end
 end
 
@@ -184,8 +176,9 @@ local function refresh()
     local db = Kontor.db
     local basket = selectedBasket()
 
+    view.basketOffset = math.min(view.basketOffset, math.max(0, #db.baskets - MAX_BASKETS))
     for i, button in ipairs(view.basketButtons) do
-        local b = db.baskets[i]
+        local b = db.baskets[i + view.basketOffset]
         if b then
             button.basketId = b.id
             button:SetText((b.id == selectedId and "> " or "") .. b.name)
@@ -201,6 +194,7 @@ local function refresh()
         view.title:SetText("Noch keine Körbe. \"Neu\" legt einen an, /kontor vorlage die Startkörbe.")
         view.stats:SetText("")
         view.table:SetRows({}, fillRow)
+        view.layout(0)
         return
     end
 
@@ -216,9 +210,11 @@ local function refresh()
     local unrealized = t.value - t.cost
     view.stats:SetText(investText .. "  ·  Marktwert " .. Kontor:FormatMoney(t.value)
         .. "  ·  Unrealisiert " .. (unrealized < 0 and "-" or "+") .. Kontor:FormatMoney(math.abs(unrealized))
-        .. "  ·  Lagerplätze " .. t.slots)
+        .. "  ·  Plätze " .. t.slots)
 
-    view.table:SetRows(Kontor:BasketItemIDs(basket), fillRow)
+    local ids = Kontor:BasketItemIDs(basket)
+    view.layout(#ids)
+    view.table:SetRows(ids, fillRow)
 end
 Kontor.RefreshBasketView = refresh
 
@@ -242,7 +238,7 @@ local function addItemFromInput(box)
 end
 
 function Kontor:BuildBasketView(frame)
-    view = { frame = frame, basketButtons = {}, basketWidgets = {} }
+    view = { frame = frame, basketButtons = {}, basketWidgets = {}, basketOffset = 0 }
 
     -- top bar, next to "Verkaufsliste"
     local deButton = self:CreateButton(frame, "Entzaubern", 100, function() Kontor:ShowDisenchantWindow() end)
@@ -260,6 +256,11 @@ function Kontor:BuildBasketView(frame)
         end)
         b:SetPoint("TOPLEFT", 12, -84 - (i - 1) * 24)
         b:GetFontString():SetJustifyH("LEFT")
+        b:EnableMouseWheel(true)
+        b:SetScript("OnMouseWheel", function(_, delta)
+            view.basketOffset = math.max(0, view.basketOffset - delta)
+            refresh()
+        end)
         view.basketButtons[i] = b
     end
     local new = self:CreateButton(frame, "Neu", 56, function() showDialog("KONTOR_NEW_BASKET") end)
@@ -281,7 +282,7 @@ function Kontor:BuildBasketView(frame)
 
     -- right: selected basket
     view.title = self:CreateLabel(frame, "", "GameFontNormalLarge")
-    view.title:SetPoint("TOPLEFT", 200, -66)
+    view.title:SetPoint("TOPLEFT", LEFT, -66)
 
     local phase = self:CreateButton(frame, "Phase", 150, function()
         local b = selectedBasket()
@@ -306,13 +307,29 @@ function Kontor:BuildBasketView(frame)
     note:SetPoint("RIGHT", budget, "LEFT", -4, 0)
 
     view.stats = self:CreateLabel(frame, "")
-    view.stats:SetPoint("TOPLEFT", 200, -90)
+    view.stats:SetPoint("TOPLEFT", LEFT, -90)
+    view.stats:SetWordWrap(false)
     view.note = self:CreateLabel(frame, "", "GameFontDisableSmall")
-    view.note:SetPoint("TOPLEFT", 200, -104)
-    view.note:SetWidth(760)
+    view.note:SetPoint("TOPLEFT", LEFT, -104)
+    view.note:SetWordWrap(false)
 
     view.table = self:CreateTable(frame, COLUMNS, ROWS, 20)
-    view.table:SetPoint("TOPLEFT", 200, -122)
+    view.table:SetPoint("TOPLEFT", LEFT, -122)
+    local tableWidth = view.table.totalWidth
+    view.stats:SetWidth(tableWidth)
+    view.note:SetWidth(tableWidth)
+    frame:SetWidth(LEFT + tableWidth + 16)
+
+    -- Height follows the content: as many item rows as the basket has (4 to
+    -- 16), and enough room for the basket buttons on the left.
+    view.layout = function(itemCount)
+        local rows = math.max(MIN_ROWS, math.min(ROWS, itemCount))
+        view.table:SetVisibleRows(rows)
+        local right = 122 + (rows + 1) * 20 + 18 + 44
+        local baskets = math.min(MAX_BASKETS, #Kontor.db.baskets)
+        local left = 84 + baskets * 24 + 70
+        frame:SetHeight(math.max(right, left, 300))
+    end
     view.table.onClick = function(itemID, mouse)
         local basket = selectedBasket()
         if mouse == "RightButton" then
@@ -332,9 +349,9 @@ function Kontor:BuildBasketView(frame)
         GameTooltip:Show()
     end
 
-    local addLabel = self:CreateLabel(frame, "Item hinzufügen (Umschalt-Klick, Ziehen oder ID):")
-    addLabel:SetPoint("BOTTOMLEFT", 200, 18)
-    local input = self:CreateInput(frame, 220)
+    local addLabel = self:CreateLabel(frame, "Item hinzufügen (Umschalt-Klick, Ziehen, ID):")
+    addLabel:SetPoint("BOTTOMLEFT", LEFT, 18)
+    local input = self:CreateInput(frame, 150)
     input:SetPoint("LEFT", addLabel, "RIGHT", 10, 0)
     input.onEnter = addItemFromInput
     local add = self:CreateButton(frame, "Hinzufügen", 90, function() addItemFromInput(input) end)

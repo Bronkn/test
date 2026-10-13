@@ -185,7 +185,7 @@ function Kontor:ShowCleanupPreview()
             row.cells.count:SetText(c.count)
             row.cells.vendor:SetText(self:FormatMoney(c.vendorTotal))
             row.cells.ah:SetText(self:FormatMoney(c.ahNetTotal))
-            row.cells.age:SetText(self:FormatAge(c.priceTime))
+            row.cells.age:SetText(self:FormatAgeShort(c.priceTime))
             row:Show()
         else
             row:Hide()

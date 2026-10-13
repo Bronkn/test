@@ -57,6 +57,16 @@ function Kontor:FormatAge(t)
     return "vor " .. days .. (days == 1 and " Tag" or " Tagen")
 end
 
+-- Short age for table columns: "jetzt", "12 Min.", "3 Std.", "4 T."
+function Kontor:FormatAgeShort(t)
+    if not t then return "-" end
+    local seconds = math.max(0, time() - t)
+    if seconds < 60 then return "jetzt" end
+    if seconds < 3600 then return math.floor(seconds / 60) .. " Min." end
+    if seconds < 48 * 3600 then return math.floor(seconds / 3600) .. " Std." end
+    return math.floor(seconds / 86400) .. " T."
+end
+
 function Kontor:FormatDuration(seconds)
     seconds = math.floor(seconds or 0)
     return string.format("%d:%02d", math.floor(seconds / 60), seconds % 60)

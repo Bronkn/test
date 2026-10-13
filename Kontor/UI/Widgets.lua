@@ -112,7 +112,10 @@ function Kontor:CreateTable(parent, columns, rows, rowHeight)
     local width = 0
     for _, col in ipairs(columns) do width = width + col.width + 6 end
     t:SetSize(width, rowHeight * (rows + 1))
+    t.totalWidth = width
     t.offset = 0
+    t.visible = rows
+    t.rowHeight = rowHeight
 
     local x = 0
     for _, col in ipairs(columns) do
@@ -153,24 +156,36 @@ function Kontor:CreateTable(parent, columns, rows, rowHeight)
         t.rows[i] = row
     end
 
+    -- shown below the last row when not everything fits
+    t.more = t:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    t.more:SetJustifyH("RIGHT")
+
     t:EnableMouseWheel(true)
     t:SetScript("OnMouseWheel", function(self, delta)
-        local maxOffset = math.max(0, #(self.data or {}) - rows)
+        local maxOffset = math.max(0, #(self.data or {}) - self.visible)
         self.offset = math.min(maxOffset, math.max(0, self.offset - delta))
         self:Render()
     end)
 
+    -- Number of rows on screen (at most the rows created); the rest scrolls.
+    function t:SetVisibleRows(n)
+        self.visible = math.max(1, math.min(rows, n))
+        self:SetHeight(self.rowHeight * (self.visible + 1))
+        self.more:ClearAllPoints()
+        self.more:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -self.rowHeight * (self.visible + 1))
+    end
+
     -- fill(row, item) writes the cells of one row.
     function t:SetRows(data, fill)
         self.data, self.fill = data, fill
-        self.offset = math.min(self.offset, math.max(0, #data - rows))
+        self.offset = math.min(self.offset, math.max(0, #data - self.visible))
         self:Render()
     end
 
     function t:Render()
         for i, row in ipairs(self.rows) do
-            local item = self.data and self.data[i + self.offset]
-            row.data = item
+            local item = i <= self.visible and self.data and self.data[i + self.offset]
+            row.data = item or nil
             if item then
                 self.fill(row, item)
                 row:Show()
@@ -178,7 +193,16 @@ function Kontor:CreateTable(parent, columns, rows, rowHeight)
                 row:Hide()
             end
         end
+        local total = self.data and #self.data or 0
+        if total > self.visible then
+            self.more:SetText("Zeilen " .. (self.offset + 1) .. "-" .. math.min(total, self.offset + self.visible)
+                .. " von " .. total .. " (Mausrad)")
+        else
+            self.more:SetText("")
+        end
     end
+
+    t:SetVisibleRows(rows)
 
     return t
 end

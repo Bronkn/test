@@ -185,7 +185,7 @@ local function refresh()
 end
 
 local function createDetail()
-    local f = Kontor:CreateWindow("KontorItemDetail", "Kontor - Item", 640, 600, "detail")
+    local f = Kontor:CreateWindow("KontorItemDetail", "Kontor - Item", 520, 600, "detail")
     f.inputs = {}
     f.basketLine = Kontor:CreateLabel(f, "", "GameFontNormal")
     f.basketLine:SetPoint("TOPLEFT", 64, -34)
@@ -200,8 +200,9 @@ local function createDetail()
     end
     local hint = Kontor:CreateLabel(f, "Preise z. B. \"1g 20s\" oder \"35s\".  Leer = nicht gesetzt.", "GameFontDisableSmall")
     hint:SetPoint("TOPLEFT", 290, -70)
+    hint:SetWidth(210)
 
-    f.phaseButton = Kontor:CreateButton(f, "Phase", 220, function()
+    f.phaseButton = Kontor:CreateButton(f, "Phase", 210, function()
         local _, item = getItem()
         if not item then return end
         for i, p in ipairs(PHASE_CHOICES) do
@@ -216,7 +217,7 @@ local function createDetail()
 
     local usageLabel = Kontor:CreateLabel(f, "Verwendung:")
     usageLabel:SetPoint("TOPLEFT", 20, -192)
-    f.usage = Kontor:CreateInput(f, 450)
+    f.usage = Kontor:CreateInput(f, 340)
     f.usage:SetPoint("TOPLEFT", 160, -188)
     f.usage:SetMaxLetters(200)
     f.usage.onEnter = save
@@ -226,33 +227,33 @@ local function createDetail()
 
     f.position = Kontor:CreateLabel(f, "")
     f.position:SetPoint("TOPLEFT", 20, -222)
-    f.position:SetWidth(600)
+    f.position:SetWidth(480)
     f.position:SetSpacing(3)
 
-    local buy = Kontor:CreateButton(f, "Kauf buchen", 110, function()
+    local buy = Kontor:CreateButton(f, "Kauf buchen", 100, function()
         Kontor:ShowDialog("KONTOR_BOOK_BUY", Kontor:ItemLabel(current.itemID), { itemID = current.itemID })
     end)
     buy:SetPoint("TOPLEFT", 20, -316)
-    local sell = Kontor:CreateButton(f, "Verkauf buchen", 120, function()
+    local sell = Kontor:CreateButton(f, "Verkauf buchen", 110, function()
         Kontor:ShowDialog("KONTOR_BOOK_SELL", Kontor:ItemLabel(current.itemID), { itemID = current.itemID })
     end)
     sell:SetPoint("LEFT", buy, "RIGHT", 4, 0)
-    local adjust = Kontor:CreateButton(f, "Bestand korrigieren", 140, function()
+    local adjust = Kontor:CreateButton(f, "Bestand korrigieren", 130, function()
         Kontor:ShowDialog("KONTOR_BOOK_ADJUST", Kontor:ItemLabel(current.itemID), { itemID = current.itemID })
     end)
     adjust:SetPoint("LEFT", sell, "RIGHT", 4, 0)
-    f.depthButton = Kontor:CreateButton(f, "Markttiefe", 110, function()
+    f.depthButton = Kontor:CreateButton(f, "Markttiefe", 100, function()
         Kontor:QueryDepthForDetail(current.basketId, current.itemID)
     end)
     f.depthButton:SetPoint("LEFT", adjust, "RIGHT", 4, 0)
 
     f.depthText = Kontor:CreateLabel(f, "")
     f.depthText:SetPoint("TOPLEFT", 20, -344)
-    f.depthText:SetWidth(600)
+    f.depthText:SetWidth(480)
 
     f.history = Kontor:CreateLabel(f, "")
     f.history:SetPoint("TOPLEFT", 20, -384)
-    f.history:SetWidth(600)
+    f.history:SetWidth(480)
     f.history:SetJustifyV("TOP")
     f.history:SetHeight(200)
 

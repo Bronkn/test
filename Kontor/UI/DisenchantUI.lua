@@ -211,11 +211,11 @@ end)
 local buyWin
 
 local BUY_COLUMNS = {
-    { key = "name", title = "Item", width = 200 },
+    { key = "name", title = "Item", width = 180 },
     { key = "price", title = "AH-Preis", width = 76, justify = "RIGHT" },
     { key = "de", title = "Entzauberwert", width = 90, justify = "RIGHT" },
     { key = "profit", title = "Gewinn", width = 76, justify = "RIGHT" },
-    { key = "note", title = "", width = 100 },
+    { key = "note", title = "", width = 90 },
 }
 
 local function refreshBuys()
@@ -233,11 +233,11 @@ end
 
 function Kontor:ShowDisenchantBuys()
     if not buyWin then
-        buyWin = self:CreateWindow("KontorDisenchantBuys", "Kontor - Kaufen zum Entzaubern", 600, 400, "deBuys")
+        buyWin = self:CreateWindow("KontorDisenchantBuys", "Kontor - Kaufen zum Entzaubern", 570, 400, "deBuys")
         local intro = self:CreateLabel(buyWin, "AH-Angebote unter Entzauberwert minus "
             .. math.floor(self.db.config.deBuyDiscount * 100) .. " % Abschlag. Klick sucht das Item im AH. Gekauft wird von Hand.")
         intro:SetPoint("TOPLEFT", 64, -34)
-        intro:SetWidth(510)
+        intro:SetWidth(480)
         buyWin.table = self:CreateTable(buyWin, BUY_COLUMNS, 14, 20)
         buyWin.table:SetPoint("TOPLEFT", 16, -70)
         buyWin.table.onClick = function(c)

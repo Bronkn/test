@@ -11,7 +11,7 @@ local function refresh(frame)
 end
 
 local function createTextWindow(id, title, buildText, actionLabel, action)
-    local frame = Kontor:CreateWindow("KontorText_" .. id, title, 640, 420, "text_" .. id)
+    local frame = Kontor:CreateWindow("KontorText_" .. id, title, 560, 420, "text_" .. id)
     frame.buildText = buildText
 
     local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
@@ -22,7 +22,7 @@ local function createTextWindow(id, title, buildText, actionLabel, action)
     editBox:SetMultiLine(true)
     editBox:SetAutoFocus(false)
     editBox:SetFontObject(ChatFontNormal)
-    editBox:SetWidth(580)
+    editBox:SetWidth(500)
     editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
     -- Read-only: any typing restores the text.
     editBox:SetScript("OnTextChanged", function(self, userInput)
@@ -79,7 +79,7 @@ local inputWindows = {}
 function Kontor:ShowInputWindow(id, title, hint, onAccept)
     local frame = inputWindows[id]
     if not frame then
-        frame = Kontor:CreateWindow("KontorInput_" .. id, title, 640, 420, "input_" .. id)
+        frame = Kontor:CreateWindow("KontorInput_" .. id, title, 560, 420, "input_" .. id)
         local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
         scroll:SetPoint("TOPLEFT", 16, -64)
         scroll:SetPoint("BOTTOMRIGHT", -34, 44)
@@ -87,7 +87,7 @@ function Kontor:ShowInputWindow(id, title, hint, onAccept)
         editBox:SetMultiLine(true)
         editBox:SetAutoFocus(false)
         editBox:SetFontObject(ChatFontNormal)
-        editBox:SetWidth(580)
+        editBox:SetWidth(500)
         editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
         scroll:SetScrollChild(editBox)
         frame.editBox = editBox

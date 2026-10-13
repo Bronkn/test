@@ -62,7 +62,7 @@ end
 
 function Kontor:ShowSettings()
     if not win then
-        win = self:CreateWindow("KontorSettings", "Kontor - Einstellungen", 560, 560, "settings")
+        win = self:CreateWindow("KontorSettings", "Kontor - Einstellungen", 480, 590, "settings")
         win.inputs, win.checks = {}, {}
         for i, f in ipairs(FIELDS) do
             local label = self:CreateLabel(win, f.label)
@@ -74,7 +74,7 @@ function Kontor:ShowSettings()
         local y = -70 - #FIELDS * 26
         for i, c in ipairs(CHECKS) do
             local check = CreateFrame("CheckButton", nil, win, "UICheckButtonTemplate")
-            check:SetPoint("TOPLEFT", 16 + ((i - 1) % 2) * 260, y - math.floor((i - 1) / 2) * 26)
+            check:SetPoint("TOPLEFT", 16 + ((i - 1) % 2) * 220, y - math.floor((i - 1) / 2) * 26)
             local label = self:CreateLabel(win, c.label)
             label:SetPoint("LEFT", check, "RIGHT", 2, 0)
             win.checks[c.key] = check
