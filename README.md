@@ -13,9 +13,13 @@ AH-Addon für World of Warcraft: Forever. Slash-Befehl `/kontor`.
 
 ## Dokumente
 
+- **Projektübergabe (Stand aller Chats): [docs/PROJEKT-UEBERGABE.md](docs/PROJEKT-UEBERGABE.md)**
+- Umzug auf einen neuen Claude-Account: [docs/MIGRATION.md](docs/MIGRATION.md)
+- Tests außerhalb des Spiels: `pip install lupa`, dann `sh tests/run_all.sh`
+
 - Pflichtenheft und Nachträge: [docs/](docs/)
 - Entscheidungen: [docs/Entscheidungen.md](docs/Entscheidungen.md)
 - API-Prüfung: [API-NOTIZEN.md](API-NOTIZEN.md)
 - Änderungen: [CHANGELOG.md](CHANGELOG.md)
 
-Aktueller Stand: **M6 bis M14**, warten auf Abnahme (Testliste: [docs/Testliste-M6-M14.md](docs/Testliste-M6-M14.md)).
+Aktueller Stand: **0.5.3**, alle Meilensteine M0–M14 gebaut; Launch-Vorbereitung in [docs/Launch-Checkliste.md](docs/Launch-Checkliste.md).
